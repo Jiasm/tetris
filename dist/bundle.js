@@ -116,7 +116,7 @@ var Brick = function () {
   }, {
     key: 'move',
     value: function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(pos /*: [number, number]*/) {
+      var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(pos /*: [number, number]*/) /*: void*/ {
         return _regenerator2.default.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -167,40 +167,68 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-_asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
-  var game, brick;
-  return _regenerator2.default.wrap(function _callee$(_context) {
+var game = new _Game2.default();
+
+game.init();
+
+var brick = new _Brick2.default({
+  shape: [[1, 1, 1], [0, 0, 1]]
+});
+
+game.loadBrick(brick, [0, 0, 1]);
+
+game.log();
+
+window.addEventListener('keyup', function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(e /*: KeyboardEvent*/) /*: void*/ {
+    var arrow;
+    return _regenerator2.default.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            arrow = {
+              83: 'bottom',
+              68: 'right',
+              65: 'left',
+              87: 'rotate'
+            };
+            _context.next = 3;
+            return game.move(arrow[e.keyCode]);
+
+          case 3:
+            game.log();
+
+          case 4:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  }));
+
+  return function (_x) {
+    return _ref.apply(this, arguments);
+  };
+}());
+
+setInterval(_asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee2() /*: void*/ {
+  return _regenerator2.default.wrap(function _callee2$(_context2) {
     while (1) {
-      switch (_context.prev = _context.next) {
+      switch (_context2.prev = _context2.next) {
         case 0:
-          game = new _Game2.default();
+          _context2.next = 2;
+          return game.move('down');
 
-
-          game.init();
-
-          brick = new _Brick2.default({
-            shape: [[1, 1, 1], [0, 0, 1]]
-          });
-
-
-          game.loadBrick(brick, [0, 0]);
-
+        case 2:
           game.log();
 
-          _context.next = 7;
-          return game.move('right');
-
-        case 7:
-
-          setTimeout(game.log.bind(game), 2000);
-
-        case 8:
+        case 3:
         case 'end':
-          return _context.stop();
+          return _context2.stop();
       }
     }
-  }, _callee, this);
-}))();
+  }, _callee2, undefined);
+})), 1000);
 
 /***/ }),
 /* 3 */
@@ -262,7 +290,7 @@ var Game = function () {
       //   [0, 0],
       //   [0, 0]
       // ]
-      this.oldMatrix = new Array(this.height).fill(0).map(function (_) {
+      this.oldMatrix = new Array(this.height).fill(0).map(function (_ /*: number*/) /*: Array<number>*/ {
         return new Array(_this.width).fill(0);
       });
       this.matrix = deepCopy(this.oldMatrix);
@@ -284,8 +312,8 @@ var Game = function () {
       // can not put
 
 
-      if (blend.some(function (arr, row) {
-        return arr.some(function (item, col) {
+      if (blend.some(function (arr /*: Array<number>*/, row /*: number*/) /*: boolean*/ {
+        return arr.some(function (item /*: number*/, col /*: number*/) /*: boolean*/ {
           return item && matrix[row + y][col + x];
         });
       })) {
@@ -303,7 +331,7 @@ var Game = function () {
       var oldMatrix = this.oldMatrix;
 
 
-      this.matrix = deepCopy(this.oldMatrix);
+      this.matrix = deepCopy(oldMatrix);
       this.position = nextPosition;
 
       this.setup();
@@ -322,8 +350,8 @@ var Game = function () {
       // put brick
 
 
-      blend.forEach(function (arr, row) {
-        return arr.forEach(function (item, col) {
+      blend.forEach(function (arr /*: Array<number>*/, row /*: number*/) /*: void*/ {
+        return arr.forEach(function (item /*: number*/, col /*: number*/) /*: void*/ {
           return item && (matrix[row + y][col + x] = item);
         });
       });
@@ -331,7 +359,7 @@ var Game = function () {
   }, {
     key: 'move',
     value: function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(pos /*: 'bottom' | 'left' | 'right'*/) {
+      var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(pos /*: 'down' | 'left' | 'right' | 'bottom'*/) /*: void*/ {
         var position, brick, height, _position3, x, y, nextPosition;
 
         return _regenerator2.default.wrap(function _callee$(_context) {
@@ -341,22 +369,37 @@ var Game = function () {
                 position = this.position, brick = this.brick, height = this.height;
                 _position3 = _slicedToArray(position, 2), x = _position3[0], y = _position3[1];
                 nextPosition = null;
-
-                switch (pos) {
-                  case 'bottom':
-                    nextPosition = [x, height - 1];
-                  case 'left':
-                    nextPosition = [x - 1, y];
-                  case 'right':
-                    nextPosition = [x + 1, y];
-                }
-                _context.next = 6;
-                return brick.move(nextPosition);
+                _context.t0 = pos;
+                _context.next = _context.t0 === 'down' ? 6 : _context.t0 === 'left' ? 8 : _context.t0 === 'right' ? 10 : _context.t0 === 'bottom' ? 12 : 14;
+                break;
 
               case 6:
+                nextPosition = [x, y + 1];
+                return _context.abrupt('break', 15);
+
+              case 8:
+                nextPosition = [x - 1, y];
+                return _context.abrupt('break', 15);
+
+              case 10:
+                nextPosition = [x + 1, y];
+                return _context.abrupt('break', 15);
+
+              case 12:
+                nextPosition = [x, height - 1];
+                return _context.abrupt('break', 15);
+
+              case 14:
+                return _context.abrupt('return');
+
+              case 15:
+                _context.next = 17;
+                return brick.move(nextPosition);
+
+              case 17:
                 this.updateMatrix(nextPosition);
 
-              case 7:
+              case 18:
               case 'end':
                 return _context.stop();
             }
@@ -374,7 +417,7 @@ var Game = function () {
     key: 'log',
     value: function log() {
       console.clear();
-      console.log(this.matrix.map(function (arr) {
+      console.log(this.matrix.map(function (arr /*: Array<number>*/) /*: string*/ {
         return arr.join('');
       }).join('\n'));
     }
@@ -386,8 +429,8 @@ var Game = function () {
 exports.default = Game;
 
 
-function deepCopy(arg) {
-  return [].concat(_toConsumableArray(arg.map(function (item) {
+function deepCopy(arg /*: Array<Array<number>>*/) /*: Array<Array<number>>*/ {
+  return [].concat(_toConsumableArray(arg.map(function (item /*: Array<number>*/) /*: Array<number>*/ {
     return [].concat(_toConsumableArray(item));
   })));
 }

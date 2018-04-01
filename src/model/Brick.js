@@ -15,7 +15,7 @@ export default class Brick {
     return this.shape
   }
 
-  async move(pos: [number, number]) {
+  async move(pos: [number, number]): void {
     return true
   }
 }

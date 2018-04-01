@@ -32,7 +32,7 @@ export default class Game {
     // ]
     this.oldMatrix = new Array(this.height)
       .fill(0)
-      .map(_ => new Array(this.width).fill(0))
+      .map((_: number): Array<number> => new Array(this.width).fill(0))
     this.matrix = deepCopy(this.oldMatrix)
   }
 
@@ -46,8 +46,11 @@ export default class Game {
 
     // can not put
     if (
-      blend.some((arr, row) =>
-        arr.some((item, col) => item && matrix[row + y][col + x])
+      blend.some((arr: Array<number>, row: number): boolean =>
+        arr.some(
+          (item: number, col: number): boolean =>
+            item && matrix[row + y][col + x]
+        )
       )
     ) {
       throw new Error('can not load new brick')
@@ -60,7 +63,7 @@ export default class Game {
   updateMatrix(nextPosition: pos) {
     let { oldMatrix } = this
 
-    this.matrix = deepCopy(this.oldMatrix)
+    this.matrix = deepCopy(oldMatrix)
     this.position = nextPosition
 
     this.setup()
@@ -71,22 +74,34 @@ export default class Game {
     let [x, y] = position
 
     // put brick
-    blend.forEach((arr, row) =>
-      arr.forEach((item, col) => item && (matrix[row + y][col + x] = item))
+    blend.forEach((arr: Array<number>, row: number): void =>
+      arr.forEach(
+        (item: number, col: number): void =>
+          item && (matrix[row + y][col + x] = item)
+      )
     )
   }
 
-  async move(pos: 'bottom' | 'left' | 'right') {
+  async move(pos: 'down' | 'left' | 'right' | 'bottom'): void {
     let { position, brick, height } = this
     let [x, y] = position
     let nextPosition = null
     switch (pos) {
-      case 'bottom':
-        nextPosition = [x, height - 1]
+      case 'down':
+        nextPosition = [x, y + 1]
+        break
       case 'left':
         nextPosition = [x - 1, y]
+        break
       case 'right':
         nextPosition = [x + 1, y]
+        break
+      case 'bottom':
+        nextPosition = [x, height - 1]
+        break
+      // case 'rotate':
+      default:
+        return
     }
     await brick.move(nextPosition)
     this.updateMatrix(nextPosition)
@@ -94,10 +109,12 @@ export default class Game {
 
   log() {
     console.clear()
-    console.log(this.matrix.map(arr => arr.join('')).join('\n'))
+    console.log(
+      this.matrix.map((arr: Array<number>): string => arr.join('')).join('\n')
+    )
   }
 }
 
-function deepCopy(arg) {
-  return [...arg.map(item => [...item])]
+function deepCopy(arg: Array<Array<number>>): Array<Array<number>> {
+  return [...arg.map((item: Array<number>): Array<number> => [...item])]
 }
