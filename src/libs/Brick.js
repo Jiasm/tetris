@@ -1,5 +1,0 @@
-// @flow
-
-export class Brick {
-
-}

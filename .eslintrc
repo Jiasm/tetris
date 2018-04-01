@@ -1,15 +1,14 @@
 extends: standard
 globals:
   moment: false
-  Cookies: false
+Cookies: false
 env:
   browser: true
-  node: true
-  jquery: true
-  mocha: true
-  amd: true
-plugins:
-  [react]
+node: true
+jquery: true
+mocha: true
+amd: true
+plugins: [react, flowtype]
 rules:
   react/jsx-uses-react: error
   react/jsx-uses-vars: error
