@@ -1,0 +1,15 @@
+extends: standard
+globals:
+  moment: false
+  Cookies: false
+env:
+  browser: true
+  node: true
+  jquery: true
+  mocha: true
+  amd: true
+plugins:
+  [react]
+rules:
+  react/jsx-uses-react: error
+  react/jsx-uses-vars: error

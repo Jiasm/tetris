@@ -1,0 +1,14 @@
+{
+  "presets": [
+    "react",
+    "env"
+  ],
+  "plugins": [
+    ["transform-class-properties"],
+    ["import", {
+      "libraryName": "antd-mobile",
+      "style": "css"
+    }],
+    "transform-flow-comments"
+  ]
+}
