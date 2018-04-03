@@ -3,6 +3,7 @@
 import Brick from './Brick'
 
 declare type pos = [number, number]
+declare type matrix = Array<Array<number>>
 
 // 游戏的核心控制
 // 用来进行方块数据的移动
@@ -10,7 +11,10 @@ export default class Game {
   width: number
   height: number
   position: pos
-  matrix: Array<Array<number>>
+  brick: Brick
+  matrix: matrix
+  oldMatrix: matrix
+  blend: matrix
 
   constructor(
     configs: Object = {
@@ -42,14 +46,14 @@ export default class Game {
     this.position = position
 
     let blend = (this.blend = brick.getShape())
-    let [x, y] = position
+    let [x, y: string] = position
 
     // can not put
     if (
       blend.some((arr: Array<number>, row: number): boolean =>
         arr.some(
           (item: number, col: number): boolean =>
-            item && matrix[row + y][col + x]
+            !!(item && matrix[row + y][col + x])
         )
       )
     ) {
@@ -76,19 +80,19 @@ export default class Game {
     // put brick
     blend.forEach((arr: Array<number>, row: number): void =>
       arr.forEach(
-        (item: number, col: number): void =>
+        (item: number, col: number): any =>
           item && (matrix[row + y][col + x] = item)
       )
     )
   }
 
-  async move(pos: 'down' | 'left' | 'right' | 'bottom'): void {
+  async move(pos: 'down' | 'left' | 'right' | 'bottom') {
     let { position, brick, height } = this
     let [x, y] = position
     let nextPosition = null
     switch (pos) {
       case 'down':
-        nextPosition = [x, y + 1]
+        nextPosition = [x, 0 + 1]
         break
       case 'left':
         nextPosition = [x - 1, y]

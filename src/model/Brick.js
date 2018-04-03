@@ -2,20 +2,18 @@
 
 // 方块
 export default class Brick {
-  shape: Array<number>
+  shape: matrix
   color: string
 
-  constructor(configs: { shape: Array<Array<number>>, color: string | null }) {
+  constructor(configs: { shape: matrix, color?: string }) {
     this.shape = configs.shape
     this.color = configs.color || 'gray'
   }
 
   // 获取方块的位置信息
-  getShape(): Array<Array<number>> {
+  getShape(): matrix {
     return this.shape
   }
 
-  async move(pos: [number, number]): void {
-    return true
-  }
+  async move(pos: [number, number]): any {}
 }
