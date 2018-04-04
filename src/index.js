@@ -2,13 +2,17 @@
 
 import Game from './model/Game'
 import Brick from './model/Brick'
+import { pointType, gameType } from './enum'
 
 let game = new Game()
 
 game.init()
 
 let brick = new Brick({
-  shape: [[1, 1, 1], [0, 0, 1]]
+  shape: [
+    [pointType.newBrick, pointType.newBrick, pointType.newBrick],
+    [pointType.empty, pointType.empty, pointType.newBrick]
+  ]
 })
 
 game.loadBrick(brick, [0, 0])
@@ -16,6 +20,7 @@ game.loadBrick(brick, [0, 0])
 game.log()
 
 window.addEventListener('keyup', async function(e: KeyboardEvent) {
+  if (game.status === gameType.over) return
   let arrow = {
     '83': 'bottom',
     '68': 'right',
@@ -23,12 +28,15 @@ window.addEventListener('keyup', async function(e: KeyboardEvent) {
     '87': 'rotate'
   }
 
-  console.log(arrow[e.keyCode])
   await game.move(arrow[e.keyCode])
   game.log()
 })
 
-// setInterval(async () => {
-//   await game.move('down')
-//   game.log()
-// }, 1000)
+let interval = setInterval(async () => {
+  await game.move('down')
+  game.log()
+
+  if (game.status === gameType.over) {
+    clearInterval(interval)
+  }
+}, 1000)

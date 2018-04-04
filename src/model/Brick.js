@@ -1,4 +1,5 @@
 // @flow
+import { rotateArray } from '../utils'
 
 // 方块
 export default class Brick {
@@ -17,25 +18,8 @@ export default class Brick {
 
   // 旋转方块
   rotate(): void {
-    this.shape = rotateArr(this.shape)
+    this.shape = rotateArray(this.shape)
   }
 
   async move(pos: [number, number]): any {}
-}
-
-function rotateArr(arr: matrix): matrix {
-  let rowLen = arr.length
-  let colLen = arr[0].length
-
-  let newArr = new Array(colLen).fill(0).map(_ => new Array(rowLen).fill(0))
-
-  arr = [].concat(arr).reverse()
-
-  newArr.forEach((row, rowIndex) => {
-    row.forEach((_, col) => {
-      newArr[rowIndex][col] = arr[col][rowIndex]
-    })
-  })
-
-  return newArr
 }

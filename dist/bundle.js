@@ -90,6 +90,8 @@ var _regenerator2 = _interopRequireDefault(_regenerator);
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _utils = __webpack_require__(7);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -119,7 +121,7 @@ var Brick = function () {
   }, {
     key: 'rotate',
     value: function rotate() /*: void*/ {
-      this.shape = rotateArr(this.shape);
+      this.shape = (0, _utils.rotateArray)(this.shape);
     }
   }, {
     key: 'move',
@@ -149,26 +151,6 @@ var Brick = function () {
 
 exports.default = Brick;
 
-
-function rotateArr(arr /*: matrix*/) /*: matrix*/ {
-  var rowLen = arr.length;
-  var colLen = arr[0].length;
-
-  var newArr = new Array(colLen).fill(0).map(function (_) {
-    return new Array(rowLen).fill(0);
-  });
-
-  arr = [].concat(arr).reverse();
-
-  newArr.forEach(function (row, rowIndex) {
-    row.forEach(function (_, col) {
-      newArr[rowIndex][col] = arr[col][rowIndex];
-    });
-  });
-
-  return newArr;
-}
-
 /***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -188,6 +170,8 @@ var _Brick = __webpack_require__(1);
 
 var _Brick2 = _interopRequireDefault(_Brick);
 
+var _enum = __webpack_require__(13);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -197,7 +181,7 @@ var game = new _Game2.default();
 game.init();
 
 var brick = new _Brick2.default({
-  shape: [[1, 1, 1], [0, 0, 1]]
+  shape: [[_enum.pointType.newBrick, _enum.pointType.newBrick, _enum.pointType.newBrick], [_enum.pointType.empty, _enum.pointType.empty, _enum.pointType.newBrick]]
 });
 
 game.loadBrick(brick, [0, 0]);
@@ -211,22 +195,27 @@ window.addEventListener('keyup', function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
+            if (!(game.status === _enum.gameType.over)) {
+              _context.next = 2;
+              break;
+            }
+
+            return _context.abrupt('return');
+
+          case 2:
             arrow = {
               '83': 'bottom',
               '68': 'right',
               '65': 'left',
               '87': 'rotate'
             };
-
-
-            console.log(arrow[e.keyCode]);
-            _context.next = 4;
+            _context.next = 5;
             return game.move(arrow[e.keyCode]);
 
-          case 4:
+          case 5:
             game.log();
 
-          case 5:
+          case 6:
           case 'end':
             return _context.stop();
         }
@@ -239,10 +228,28 @@ window.addEventListener('keyup', function () {
   };
 }());
 
-// setInterval(async () => {
-//   await game.move('down')
-//   game.log()
-// }, 1000)
+var interval = setInterval(_asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee2() {
+  return _regenerator2.default.wrap(function _callee2$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          _context2.next = 2;
+          return game.move('down');
+
+        case 2:
+          game.log();
+
+          if (game.status === _enum.gameType.over) {
+            clearInterval(interval);
+          }
+
+        case 4:
+        case 'end':
+          return _context2.stop();
+      }
+    }
+  }, _callee2, undefined);
+})), 1000);
 
 /***/ }),
 /* 3 */
@@ -267,9 +274,11 @@ var _Brick = __webpack_require__(1);
 
 var _Brick2 = _interopRequireDefault(_Brick);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _utils = __webpack_require__(7);
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+var _enum = __webpack_require__(13);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
@@ -302,16 +311,25 @@ var Game = function () {
       //   [0, 0],
       //   [0, 0]
       // ]
+
+      this.status = _enum.gameType.start;
+
       this.oldMatrix = new Array(this.height).fill(0).map(function (_ /*: number*/) /*: arr*/ {
-        return new Array(_this.width).fill(0);
+        return new Array(_this.width).fill(_enum.pointType.empty);
       });
-      this.oldMatrix[this.height - 1] = new Array(this.width).fill(2);
-      this.matrix = deepCopy(this.oldMatrix);
+
+      // test
+      this.oldMatrix[this.height - 1] = new Array(this.width).fill(_enum.pointType.oldBrick);
+      this.matrix = (0, _utils.deepCopy)(this.oldMatrix);
     }
   }, {
     key: 'loadBrick',
     value: function loadBrick(brick /*: Brick*/, position /*: pos*/) {
-      var matrix = this.matrix;
+      var matrix = this.matrix,
+          status = this.status;
+
+
+      if (status === _enum.gameType.over) return;
 
       this.brick = brick;
       this.position = position;
@@ -341,10 +359,13 @@ var Game = function () {
   }, {
     key: 'updateMatrix',
     value: function updateMatrix(nextPosition /*: pos*/) {
-      var oldMatrix = this.oldMatrix;
+      var oldMatrix = this.oldMatrix,
+          status = this.status;
 
 
-      this.matrix = deepCopy(oldMatrix);
+      if (status === _enum.gameType.over) return;
+
+      this.matrix = (0, _utils.deepCopy)(oldMatrix);
       this.position = nextPosition;
 
       this.setup();
@@ -368,57 +389,84 @@ var Game = function () {
           return item && (matrix[row + y][col + x] = item);
         });
       });
+
+      this.bottomDetection();
     }
   }, {
     key: 'move',
     value: function () {
       var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(pos /*: 'down' | 'left' | 'right' | 'bottom'*/) {
-        var position, brick, height, matrix, blend, _position3, x, y, nextPosition;
+        var position, brick, height, width, matrix, blend, status, _position3, x, y, nextPosition;
 
         return _regenerator2.default.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                position = this.position, brick = this.brick, height = this.height, matrix = this.matrix, blend = this.blend;
+                position = this.position, brick = this.brick, height = this.height, width = this.width, matrix = this.matrix, blend = this.blend, status = this.status;
+
+                if (!(status === _enum.gameType.over)) {
+                  _context.next = 3;
+                  break;
+                }
+
+                return _context.abrupt('return');
+
+              case 3:
                 _position3 = _slicedToArray(position, 2), x = _position3[0], y = _position3[1];
                 nextPosition = null;
                 _context.t0 = pos;
-                _context.next = _context.t0 === 'down' ? 6 : _context.t0 === 'left' ? 8 : _context.t0 === 'right' ? 10 : _context.t0 === 'bottom' ? 12 : _context.t0 === 'rotate' ? 14 : 18;
+                _context.next = _context.t0 === 'down' ? 8 : _context.t0 === 'left' ? 10 : _context.t0 === 'right' ? 14 : _context.t0 === 'bottom' ? 18 : _context.t0 === 'rotate' ? 20 : 24;
                 break;
 
-              case 6:
-                nextPosition = [x, 0 + 1];
-                return _context.abrupt('break', 19);
-
               case 8:
-                nextPosition = [x - 1, y];
-                return _context.abrupt('break', 19);
+                nextPosition = [x, y + 1];
+                return _context.abrupt('break', 25);
 
               case 10:
-                nextPosition = [x + 1, y];
-                return _context.abrupt('break', 19);
+                if (!(x <= 0)) {
+                  _context.next = 12;
+                  break;
+                }
+
+                return _context.abrupt('return');
 
               case 12:
-                nextPosition = [x, height - blend.length];
-                return _context.abrupt('break', 19);
+                nextPosition = [x - 1, y];
+                return _context.abrupt('break', 25);
 
               case 14:
+                if (!(x >= width - blend[0].length)) {
+                  _context.next = 16;
+                  break;
+                }
+
+                return _context.abrupt('return');
+
+              case 16:
+                nextPosition = [x + 1, y];
+                return _context.abrupt('break', 25);
+
+              case 18:
+                nextPosition = [x, height - blend.length];
+                return _context.abrupt('break', 25);
+
+              case 20:
                 nextPosition = position;
                 brick.rotate();
                 this.blend = brick.getShape();
-                return _context.abrupt('break', 19);
+                return _context.abrupt('break', 25);
 
-              case 18:
+              case 24:
                 return _context.abrupt('return');
 
-              case 19:
-                _context.next = 21;
+              case 25:
+                _context.next = 27;
                 return brick.move(nextPosition);
 
-              case 21:
+              case 27:
                 this.updateMatrix(nextPosition);
 
-              case 22:
+              case 28:
               case 'end':
                 return _context.stop();
             }
@@ -437,7 +485,37 @@ var Game = function () {
 
   }, {
     key: 'bottomDetection',
-    value: function bottomDetection() {}
+    value: function bottomDetection() {
+      var matrix = this.matrix,
+          position = this.position,
+          status = this.status;
+
+
+      if (status === _enum.gameType.over) return;
+
+      var _position4 = _slicedToArray(this.position, 2),
+          x = _position4[0],
+          y = _position4[1];
+
+      var blIndex = (0, _utils.bottomLineIndex)(this.blend); // 这里边获取的下标 + 当前方块的坐标，如果对应的在矩阵中有值，就说明触底了。
+
+      var blPos = blIndex.map(function (index) {
+        return [x, y + index];
+      });
+
+      this.log.call({ matrix: blPos });
+      var result = blPos.some(function (_ref2) {
+        var _ref3 = _slicedToArray(_ref2, 2),
+            col = _ref3[0],
+            row = _ref3[1];
+
+        return matrix[row][col] === _enum.pointType.oldBrick;
+      });
+
+      if (result) {
+        this.status = 0;
+      }
+    }
   }, {
     key: 'log',
     value: function log() {
@@ -452,13 +530,6 @@ var Game = function () {
 }();
 
 exports.default = Game;
-
-
-function deepCopy(arg /*: matrix*/) /*: matrix*/ {
-  return [].concat(_toConsumableArray(arg.map(function (item /*: arr*/) /*: arr*/ {
-    return [].concat(_toConsumableArray(item));
-  })));
-}
 
 /***/ }),
 /* 4 */
@@ -1240,6 +1311,240 @@ if (hadRuntime) {
 
 module.exports = __webpack_require__(2);
 
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _deepCopy = __webpack_require__(8);
+
+Object.defineProperty(exports, 'deepCopy', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_deepCopy).default;
+  }
+});
+
+var _buildEnum = __webpack_require__(16);
+
+Object.defineProperty(exports, 'buildEnum', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_buildEnum).default;
+  }
+});
+
+var _rotateArray = __webpack_require__(10);
+
+Object.defineProperty(exports, 'rotateArray', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_rotateArray).default;
+  }
+});
+
+var _bottomLineIndex = __webpack_require__(9);
+
+Object.defineProperty(exports, 'bottomLineIndex', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_bottomLineIndex).default;
+  }
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+/**
+ * 一个针对性很强的深拷贝
+ * @param {matrix} arg
+ */
+module.exports = function (arg /*: matrix*/) /*: matrix*/ {
+  return [].concat(_toConsumableArray(arg.map(function (row /*: arr*/) /*: arr*/ {
+    return [].concat(_toConsumableArray(row));
+  })));
+};
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _ = __webpack_require__(7);
+
+var cache = {}; // 添加一个缓存对象
+
+module.exports = function (arg /*: matrix*/) {
+  var key = matrixString(arg);
+
+  if (cache[key]) return cache[key];
+
+  return cache[key] = (0, _.rotateArray)(arg).map(filterIndex);
+};
+
+/**
+ * 获取每一列对应的下标
+ * @param {arr} row
+ */
+function filterIndex(row /*: arr*/) /*: number*/ {
+  var result = getIndex(row);
+  return result >= 0 ? row.length - result : result;
+}
+
+/**
+ * 获取当前下标，如果没有则返回-1， 理论上不会出现这种情况
+ * @param {martix} arr
+ * @param {number} index
+ */
+function getIndex(arr /*: arr*/) /*: number*/ {
+  var index /*: number*/ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+  if (index >= arr.length) return -1;
+
+  return arr[index] ? index : getIndex(arr, index + 1);
+}
+
+/**
+ * 将一个矩阵转换为字符串，主要用来获取方块坐标信息的缓存使用
+ * @param {matrix} arr
+ */
+function matrixString(arr /*: matrix*/) /*: string*/ {
+  return arr.map(function (row) {
+    return row.join('');
+  }).join('|');
+}
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (arg /*: matrix*/) /*: matrix*/ {
+  var rowLen = arg.length;
+  var colLen = arg[0].length;
+
+  var newArg = new Array(colLen).fill(0).map(function (_) {
+    return new Array(rowLen).fill(0);
+  });
+
+  arg = [].concat(arg).reverse();
+
+  newArg.forEach(function (row, rowIndex) {
+    row.forEach(function (_, col) {
+      newArg[rowIndex][col] = arg[col][rowIndex];
+    });
+  });
+
+  return newArg;
+};
+
+/***/ }),
+/* 11 */,
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _utils = __webpack_require__(7);
+
+var obj = {
+  start: 1,
+  over: 0
+};
+
+module.exports = (0, _utils.buildEnum)(obj);
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _gameType = __webpack_require__(12);
+
+Object.defineProperty(exports, 'gameType', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_gameType).default;
+  }
+});
+
+var _pointType = __webpack_require__(14);
+
+Object.defineProperty(exports, 'pointType', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_pointType).default;
+  }
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _utils = __webpack_require__(7);
+
+var obj = {
+  empty: 0,
+  newBrick: 1,
+  oldBrick: 2
+};
+
+module.exports = (0, _utils.buildEnum)(obj);
+
+/***/ }),
+/* 15 */,
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+module.exports = function (obj) {
+  var newObj = {};
+
+  Object.entries(Object.assign(newObj, obj)).forEach(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+        value = _ref2[0],
+        key = _ref2[1];
+
+    return newObj[key] = value;
+  });
+
+  return newObj;
+};
 
 /***/ })
 /******/ ]);
