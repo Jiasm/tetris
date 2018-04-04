@@ -2,9 +2,6 @@
 
 import Brick from './Brick'
 
-declare type pos = [number, number]
-declare type matrix = Array<Array<number>>
-
 // 游戏的核心控制
 // 用来进行方块数据的移动
 export default class Game {
@@ -36,7 +33,8 @@ export default class Game {
     // ]
     this.oldMatrix = new Array(this.height)
       .fill(0)
-      .map((_: number): Array<number> => new Array(this.width).fill(0))
+      .map((_: number): arr => new Array(this.width).fill(0))
+    this.oldMatrix[this.height - 1] = new Array(this.width).fill(2)
     this.matrix = deepCopy(this.oldMatrix)
   }
 
@@ -50,7 +48,7 @@ export default class Game {
 
     // can not put
     if (
-      blend.some((arr: Array<number>, row: number): boolean =>
+      blend.some((arr: arr, row: number): boolean =>
         arr.some(
           (item: number, col: number): boolean =>
             !!(item && matrix[row + y][col + x])
@@ -78,7 +76,7 @@ export default class Game {
     let [x, y] = position
 
     // put brick
-    blend.forEach((arr: Array<number>, row: number): void =>
+    blend.forEach((arr: arr, row: number): void =>
       arr.forEach(
         (item: number, col: number): any =>
           item && (matrix[row + y][col + x] = item)
@@ -87,7 +85,7 @@ export default class Game {
   }
 
   async move(pos: 'down' | 'left' | 'right' | 'bottom') {
-    let { position, brick, height } = this
+    let { position, brick, height, matrix, blend } = this
     let [x, y] = position
     let nextPosition = null
     switch (pos) {
@@ -101,9 +99,13 @@ export default class Game {
         nextPosition = [x + 1, y]
         break
       case 'bottom':
-        nextPosition = [x, height - 1]
+        nextPosition = [x, height - blend.length]
         break
-      // case 'rotate':
+      case 'rotate':
+        nextPosition = position
+        brick.rotate()
+        this.blend = brick.getShape()
+        break
       default:
         return
     }
@@ -111,14 +113,15 @@ export default class Game {
     this.updateMatrix(nextPosition)
   }
 
+  // 触底检测
+  bottomDetection() {}
+
   log() {
     console.clear()
-    console.log(
-      this.matrix.map((arr: Array<number>): string => arr.join('')).join('\n')
-    )
+    console.log(this.matrix.map((arr: arr): string => arr.join('')).join('\n'))
   }
 }
 
-function deepCopy(arg: Array<Array<number>>): Array<Array<number>> {
-  return [...arg.map((item: Array<number>): Array<number> => [...item])]
+function deepCopy(arg: matrix): matrix {
+  return [...arg.map((item: arr): arr => [...item])]
 }

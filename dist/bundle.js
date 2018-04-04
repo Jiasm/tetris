@@ -98,7 +98,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 // 方块
 var Brick = function () {
-  function Brick(configs /*: { shape: Array<Array<number>>, color: string | null }*/) {
+  function Brick(configs /*: { shape: matrix, color?: string }*/) {
     _classCallCheck(this, Brick);
 
     this.shape = configs.shape;
@@ -110,20 +110,25 @@ var Brick = function () {
 
   _createClass(Brick, [{
     key: 'getShape',
-    value: function getShape() /*: Array<Array<number>>*/ {
+    value: function getShape() /*: matrix*/ {
       return this.shape;
+    }
+
+    // 旋转方块
+
+  }, {
+    key: 'rotate',
+    value: function rotate() /*: void*/ {
+      this.shape = rotateArr(this.shape);
     }
   }, {
     key: 'move',
     value: function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(pos /*: [number, number]*/) /*: void*/ {
+      var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(pos /*: [number, number]*/) /*: any*/ {
         return _regenerator2.default.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                return _context.abrupt('return', true);
-
-              case 1:
               case 'end':
                 return _context.stop();
             }
@@ -143,6 +148,26 @@ var Brick = function () {
 }();
 
 exports.default = Brick;
+
+
+function rotateArr(arr /*: matrix*/) /*: matrix*/ {
+  var rowLen = arr.length;
+  var colLen = arr[0].length;
+
+  var newArr = new Array(colLen).fill(0).map(function (_) {
+    return new Array(rowLen).fill(0);
+  });
+
+  arr = [].concat(arr).reverse();
+
+  newArr.forEach(function (row, rowIndex) {
+    row.forEach(function (_, col) {
+      newArr[rowIndex][col] = arr[col][rowIndex];
+    });
+  });
+
+  return newArr;
+}
 
 /***/ }),
 /* 2 */
@@ -175,30 +200,33 @@ var brick = new _Brick2.default({
   shape: [[1, 1, 1], [0, 0, 1]]
 });
 
-game.loadBrick(brick, [0, 0, 1]);
+game.loadBrick(brick, [0, 0]);
 
 game.log();
 
 window.addEventListener('keyup', function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(e /*: KeyboardEvent*/) /*: void*/ {
+  var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(e /*: KeyboardEvent*/) {
     var arrow;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             arrow = {
-              83: 'bottom',
-              68: 'right',
-              65: 'left',
-              87: 'rotate'
+              '83': 'bottom',
+              '68': 'right',
+              '65': 'left',
+              '87': 'rotate'
             };
-            _context.next = 3;
+
+
+            console.log(arrow[e.keyCode]);
+            _context.next = 4;
             return game.move(arrow[e.keyCode]);
 
-          case 3:
+          case 4:
             game.log();
 
-          case 4:
+          case 5:
           case 'end':
             return _context.stop();
         }
@@ -211,24 +239,10 @@ window.addEventListener('keyup', function () {
   };
 }());
 
-setInterval(_asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee2() /*: void*/ {
-  return _regenerator2.default.wrap(function _callee2$(_context2) {
-    while (1) {
-      switch (_context2.prev = _context2.next) {
-        case 0:
-          _context2.next = 2;
-          return game.move('down');
-
-        case 2:
-          game.log();
-
-        case 3:
-        case 'end':
-          return _context2.stop();
-      }
-    }
-  }, _callee2, undefined);
-})), 1000);
+// setInterval(async () => {
+//   await game.move('down')
+//   game.log()
+// }, 1000)
 
 /***/ }),
 /* 3 */
@@ -263,8 +277,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 // 游戏的核心控制
 // 用来进行方块数据的移动
-/*:: declare type pos = [number, number]*/
-
 var Game = function () {
   function Game() {
     var configs /*: Object*/ = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
@@ -290,9 +302,10 @@ var Game = function () {
       //   [0, 0],
       //   [0, 0]
       // ]
-      this.oldMatrix = new Array(this.height).fill(0).map(function (_ /*: number*/) /*: Array<number>*/ {
+      this.oldMatrix = new Array(this.height).fill(0).map(function (_ /*: number*/) /*: arr*/ {
         return new Array(_this.width).fill(0);
       });
+      this.oldMatrix[this.height - 1] = new Array(this.width).fill(2);
       this.matrix = deepCopy(this.oldMatrix);
     }
   }, {
@@ -307,14 +320,14 @@ var Game = function () {
 
       var _position = _slicedToArray(position, 2),
           x = _position[0],
-          y = _position[1];
+          y /*: string*/ = _position[1];
 
       // can not put
 
 
-      if (blend.some(function (arr /*: Array<number>*/, row /*: number*/) /*: boolean*/ {
+      if (blend.some(function (arr /*: arr*/, row /*: number*/) /*: boolean*/ {
         return arr.some(function (item /*: number*/, col /*: number*/) /*: boolean*/ {
-          return item && matrix[row + y][col + x];
+          return !!(item && matrix[row + y][col + x]);
         });
       })) {
         throw new Error('can not load new brick');
@@ -350,8 +363,8 @@ var Game = function () {
       // put brick
 
 
-      blend.forEach(function (arr /*: Array<number>*/, row /*: number*/) /*: void*/ {
-        return arr.forEach(function (item /*: number*/, col /*: number*/) /*: void*/ {
+      blend.forEach(function (arr /*: arr*/, row /*: number*/) /*: void*/ {
+        return arr.forEach(function (item /*: number*/, col /*: number*/) /*: any*/ {
           return item && (matrix[row + y][col + x] = item);
         });
       });
@@ -359,47 +372,53 @@ var Game = function () {
   }, {
     key: 'move',
     value: function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(pos /*: 'down' | 'left' | 'right' | 'bottom'*/) /*: void*/ {
-        var position, brick, height, _position3, x, y, nextPosition;
+      var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(pos /*: 'down' | 'left' | 'right' | 'bottom'*/) {
+        var position, brick, height, matrix, blend, _position3, x, y, nextPosition;
 
         return _regenerator2.default.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                position = this.position, brick = this.brick, height = this.height;
+                position = this.position, brick = this.brick, height = this.height, matrix = this.matrix, blend = this.blend;
                 _position3 = _slicedToArray(position, 2), x = _position3[0], y = _position3[1];
                 nextPosition = null;
                 _context.t0 = pos;
-                _context.next = _context.t0 === 'down' ? 6 : _context.t0 === 'left' ? 8 : _context.t0 === 'right' ? 10 : _context.t0 === 'bottom' ? 12 : 14;
+                _context.next = _context.t0 === 'down' ? 6 : _context.t0 === 'left' ? 8 : _context.t0 === 'right' ? 10 : _context.t0 === 'bottom' ? 12 : _context.t0 === 'rotate' ? 14 : 18;
                 break;
 
               case 6:
-                nextPosition = [x, y + 1];
-                return _context.abrupt('break', 15);
+                nextPosition = [x, 0 + 1];
+                return _context.abrupt('break', 19);
 
               case 8:
                 nextPosition = [x - 1, y];
-                return _context.abrupt('break', 15);
+                return _context.abrupt('break', 19);
 
               case 10:
                 nextPosition = [x + 1, y];
-                return _context.abrupt('break', 15);
+                return _context.abrupt('break', 19);
 
               case 12:
-                nextPosition = [x, height - 1];
-                return _context.abrupt('break', 15);
+                nextPosition = [x, height - blend.length];
+                return _context.abrupt('break', 19);
 
               case 14:
-                return _context.abrupt('return');
-
-              case 15:
-                _context.next = 17;
-                return brick.move(nextPosition);
-
-              case 17:
-                this.updateMatrix(nextPosition);
+                nextPosition = position;
+                brick.rotate();
+                this.blend = brick.getShape();
+                return _context.abrupt('break', 19);
 
               case 18:
+                return _context.abrupt('return');
+
+              case 19:
+                _context.next = 21;
+                return brick.move(nextPosition);
+
+              case 21:
+                this.updateMatrix(nextPosition);
+
+              case 22:
               case 'end':
                 return _context.stop();
             }
@@ -413,11 +432,17 @@ var Game = function () {
 
       return move;
     }()
+
+    // 触底检测
+
+  }, {
+    key: 'bottomDetection',
+    value: function bottomDetection() {}
   }, {
     key: 'log',
     value: function log() {
       console.clear();
-      console.log(this.matrix.map(function (arr /*: Array<number>*/) /*: string*/ {
+      console.log(this.matrix.map(function (arr /*: arr*/) /*: string*/ {
         return arr.join('');
       }).join('\n'));
     }
@@ -429,8 +454,8 @@ var Game = function () {
 exports.default = Game;
 
 
-function deepCopy(arg /*: Array<Array<number>>*/) /*: Array<Array<number>>*/ {
-  return [].concat(_toConsumableArray(arg.map(function (item /*: Array<number>*/) /*: Array<number>*/ {
+function deepCopy(arg /*: matrix*/) /*: matrix*/ {
+  return [].concat(_toConsumableArray(arg.map(function (item /*: arr*/) /*: arr*/ {
     return [].concat(_toConsumableArray(item));
   })));
 }

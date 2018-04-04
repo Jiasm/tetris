@@ -23,11 +23,12 @@ window.addEventListener('keyup', async function(e: KeyboardEvent) {
     '87': 'rotate'
   }
 
+  console.log(arrow[e.keyCode])
   await game.move(arrow[e.keyCode])
   game.log()
 })
 
-setInterval(async () => {
-  await game.move('down')
-  game.log()
-}, 1000)
+// setInterval(async () => {
+//   await game.move('down')
+//   game.log()
+// }, 1000)

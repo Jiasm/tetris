@@ -1,2 +1,3 @@
 declare type pos = [number, number]
-declare type matrix = Array<Array<number>>
+declare type arr = Array<number>
+declare type matrix = Array<arr>
