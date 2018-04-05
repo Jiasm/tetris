@@ -627,7 +627,7 @@ function loadBrick() {
     shape: shape
   });
 
-  game.loadBrick(brick, [Math.random() * (8 - shape.length + 1) | 0, 0]);
+  game.loadBrick(brick, [Math.random() * (8 - shape[0].length + 1) | 0, 0]);
 }
 
 document.querySelectorAll('.controller-btn').forEach(function (item) {
