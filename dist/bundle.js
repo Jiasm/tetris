@@ -63,18 +63,11 @@
 /******/ 	__webpack_require__.p = "./dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 14);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(4);
-
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -84,13 +77,100 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _regenerator = __webpack_require__(0);
+var _deepCopy = __webpack_require__(10);
+
+Object.defineProperty(exports, 'deepCopy', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_deepCopy).default;
+  }
+});
+
+var _lineIndex = __webpack_require__(15);
+
+Object.defineProperty(exports, 'lineIndex', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_lineIndex).default;
+  }
+});
+
+var _buildEnum = __webpack_require__(9);
+
+Object.defineProperty(exports, 'buildEnum', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_buildEnum).default;
+  }
+});
+
+var _rotateArray = __webpack_require__(11);
+
+Object.defineProperty(exports, 'rotateArray', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_rotateArray).default;
+  }
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(12);
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _gameType = __webpack_require__(5);
+
+Object.defineProperty(exports, 'gameType', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_gameType).default;
+  }
+});
+
+var _pointType = __webpack_require__(6);
+
+Object.defineProperty(exports, 'pointType', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_pointType).default;
+  }
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _regenerator = __webpack_require__(1);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _utils = __webpack_require__(7);
+var _utils = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -152,25 +232,25 @@ var Brick = function () {
 exports.default = Brick;
 
 /***/ }),
-/* 2 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _regenerator = __webpack_require__(0);
+var _regenerator = __webpack_require__(1);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _Game = __webpack_require__(3);
+var _Game = __webpack_require__(7);
 
 var _Game2 = _interopRequireDefault(_Game);
 
-var _Brick = __webpack_require__(1);
+var _Brick = __webpack_require__(3);
 
 var _Brick2 = _interopRequireDefault(_Brick);
 
-var _enum = __webpack_require__(13);
+var _enum = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -179,13 +259,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 var game = new _Game2.default();
 
 game.init();
-
-var brick = new _Brick2.default({
-  shape: [[_enum.pointType.newBrick, _enum.pointType.newBrick, _enum.pointType.newBrick], [_enum.pointType.empty, _enum.pointType.empty, _enum.pointType.newBrick]]
-});
-
-game.loadBrick(brick, [0, 0]);
-
+loadBrick();
 game.log();
 
 window.addEventListener('keyup', function () {
@@ -233,17 +307,33 @@ var interval = setInterval(_asyncToGenerator( /*#__PURE__*/_regenerator2.default
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
-          _context2.next = 2;
-          return game.move('down');
-
-        case 2:
-          game.log();
-
-          if (game.status === _enum.gameType.over) {
-            clearInterval(interval);
+          if (!(game.status === _enum.gameType.free)) {
+            _context2.next = 4;
+            break;
           }
 
+          loadBrick();
+          _context2.next = 10;
+          break;
+
         case 4:
+          if (!(game.status === _enum.gameType.over)) {
+            _context2.next = 8;
+            break;
+          }
+
+          clearInterval(interval);
+          _context2.next = 10;
+          break;
+
+        case 8:
+          _context2.next = 10;
+          return game.move('down');
+
+        case 10:
+          game.log();
+
+        case 11:
         case 'end':
           return _context2.stop();
       }
@@ -251,8 +341,51 @@ var interval = setInterval(_asyncToGenerator( /*#__PURE__*/_regenerator2.default
   }, _callee2, undefined);
 })), 1000);
 
+function loadBrick() {
+  var brick = new _Brick2.default({
+    shape: [[_enum.pointType.newBrick, _enum.pointType.newBrick, _enum.pointType.newBrick], [_enum.pointType.empty, _enum.pointType.empty, _enum.pointType.newBrick]]
+  });
+
+  game.loadBrick(brick, [0, 0]);
+}
+
 /***/ }),
-/* 3 */
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _utils = __webpack_require__(0);
+
+var obj = {
+  start: 1,
+  over: 0,
+  free: 2, // 空闲状态，等待新方块的插入
+  running: 3 // 正常运行中
+};
+
+module.exports = (0, _utils.buildEnum)(obj);
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _utils = __webpack_require__(0);
+
+var obj = {
+  empty: 0,
+  newBrick: 1,
+  oldBrick: 2
+};
+
+module.exports = (0, _utils.buildEnum)(obj);
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -262,7 +395,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _regenerator = __webpack_require__(0);
+var _regenerator = __webpack_require__(1);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
@@ -270,13 +403,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Brick = __webpack_require__(1);
+var _Brick = __webpack_require__(3);
 
 var _Brick2 = _interopRequireDefault(_Brick);
 
-var _utils = __webpack_require__(7);
+var _utils = __webpack_require__(0);
 
-var _enum = __webpack_require__(13);
+var _enum = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -319,6 +452,7 @@ var Game = function () {
       });
 
       // test
+      this.oldMatrix[this.height - 2] = new Array(this.width).fill(_enum.pointType.oldBrick);
       this.oldMatrix[this.height - 1] = new Array(this.width).fill(_enum.pointType.oldBrick);
       this.matrix = (0, _utils.deepCopy)(this.oldMatrix);
     }
@@ -332,13 +466,14 @@ var Game = function () {
       if (status === _enum.gameType.over) return;
 
       this.brick = brick;
-      this.position = position;
+      this.nextPosition = position;
+      this.status = _enum.gameType.running;
 
       var blend = this.blend = brick.getShape();
 
       var _position = _slicedToArray(position, 2),
           x = _position[0],
-          y /*: string*/ = _position[1];
+          y = _position[1];
 
       // can not put
 
@@ -348,18 +483,21 @@ var Game = function () {
           return !!(item && matrix[row + y][col + x]);
         });
       })) {
-        throw new Error('can not load new brick');
+        this.status = _enum.gameType.over;
+        return;
+        // throw new Error('can not load new brick')
       }
 
-      this.setup();
+      this.updateMatrix();
     }
 
     // 更新当前brick的位置
 
   }, {
     key: 'updateMatrix',
-    value: function updateMatrix(nextPosition /*: pos*/) {
+    value: function updateMatrix() {
       var oldMatrix = this.oldMatrix,
+          nextPosition = this.nextPosition,
           status = this.status;
 
 
@@ -370,12 +508,18 @@ var Game = function () {
 
       this.setup();
     }
+
+    // 将当前活动的方块装载到矩阵中
+
   }, {
     key: 'setup',
     value: function setup() {
       var matrix = this.matrix,
           position = this.position,
           blend = this.blend;
+
+
+      if (!blend || !position) return;
 
       var _position2 = _slicedToArray(position, 2),
           x = _position2[0],
@@ -396,7 +540,7 @@ var Game = function () {
     key: 'move',
     value: function () {
       var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator2.default.mark(function _callee(pos /*: 'down' | 'left' | 'right' | 'bottom'*/) {
-        var position, brick, height, width, matrix, blend, status, _position3, x, y, nextPosition;
+        var position, brick, height, width, matrix, blend, status, _position3, x, y, topLine, deep;
 
         return _regenerator2.default.wrap(function _callee$(_context) {
           while (1) {
@@ -404,7 +548,7 @@ var Game = function () {
               case 0:
                 position = this.position, brick = this.brick, height = this.height, width = this.width, matrix = this.matrix, blend = this.blend, status = this.status;
 
-                if (!(status === _enum.gameType.over)) {
+                if (!(!position || !brick || !blend || status === _enum.gameType.over)) {
                   _context.next = 3;
                   break;
                 }
@@ -413,14 +557,15 @@ var Game = function () {
 
               case 3:
                 _position3 = _slicedToArray(position, 2), x = _position3[0], y = _position3[1];
-                nextPosition = null;
+
+                this.nextPosition = null;
                 _context.t0 = pos;
-                _context.next = _context.t0 === 'down' ? 8 : _context.t0 === 'left' ? 10 : _context.t0 === 'right' ? 14 : _context.t0 === 'bottom' ? 18 : _context.t0 === 'rotate' ? 20 : 24;
+                _context.next = _context.t0 === 'down' ? 8 : _context.t0 === 'left' ? 10 : _context.t0 === 'right' ? 14 : _context.t0 === 'bottom' ? 18 : _context.t0 === 'rotate' ? 22 : 26;
                 break;
 
               case 8:
-                nextPosition = [x, y + 1];
-                return _context.abrupt('break', 25);
+                this.nextPosition = [x, y + 1];
+                return _context.abrupt('break', 27);
 
               case 10:
                 if (!(x <= 0)) {
@@ -431,8 +576,8 @@ var Game = function () {
                 return _context.abrupt('return');
 
               case 12:
-                nextPosition = [x - 1, y];
-                return _context.abrupt('break', 25);
+                this.nextPosition = [x - 1, y];
+                return _context.abrupt('break', 27);
 
               case 14:
                 if (!(x >= width - blend[0].length)) {
@@ -443,30 +588,42 @@ var Game = function () {
                 return _context.abrupt('return');
 
               case 16:
-                nextPosition = [x + 1, y];
-                return _context.abrupt('break', 25);
+                this.nextPosition = [x + 1, y];
+                return _context.abrupt('break', 27);
 
               case 18:
-                nextPosition = [x, height - blend.length];
-                return _context.abrupt('break', 25);
+                topLine = (0, _utils.lineIndex)(this.oldMatrix, false);
+                deep = Math.min.apply(Math, (0, _utils.lineIndex)(this.blend, true).map(function (deep, colIndex) {
+                  return topLine[x + colIndex] - deep;
+                }));
 
-              case 20:
-                nextPosition = position;
+                this.nextPosition = [x, deep];
+                return _context.abrupt('break', 27);
+
+              case 22:
+                this.nextPosition = position;
                 brick.rotate();
                 this.blend = brick.getShape();
-                return _context.abrupt('break', 25);
+                return _context.abrupt('break', 27);
 
-              case 24:
+              case 26:
                 return _context.abrupt('return');
 
-              case 25:
-                _context.next = 27;
-                return brick.move(nextPosition);
-
               case 27:
-                this.updateMatrix(nextPosition);
+                _context.t1 = this.nextPosition;
 
-              case 28:
+                if (!_context.t1) {
+                  _context.next = 31;
+                  break;
+                }
+
+                _context.next = 31;
+                return brick.move(this.nextPosition);
+
+              case 31:
+                this.updateMatrix();
+
+              case 32:
               case 'end':
                 return _context.stop();
             }
@@ -491,19 +648,18 @@ var Game = function () {
           status = this.status;
 
 
-      if (status === _enum.gameType.over) return;
+      if (!position || status === _enum.gameType.over) return;
 
-      var _position4 = _slicedToArray(this.position, 2),
+      var _position4 = _slicedToArray(position, 2),
           x = _position4[0],
           y = _position4[1];
 
-      var blIndex = (0, _utils.bottomLineIndex)(this.blend); // 这里边获取的下标 + 当前方块的坐标，如果对应的在矩阵中有值，就说明触底了。
+      var blIndex = (0, _utils.lineIndex)(this.blend, true); // 这里边获取的下标 + 当前方块的坐标，如果对应的在矩阵中有值，就说明触底了。
 
-      var blPos = blIndex.map(function (index) {
-        return [x, y + index];
+      var blPos = blIndex.map(function (index, colIndex) {
+        return [x + colIndex, y + index];
       });
 
-      this.log.call({ matrix: blPos });
       var result = blPos.some(function (_ref2) {
         var _ref3 = _slicedToArray(_ref2, 2),
             col = _ref3[0],
@@ -513,8 +669,52 @@ var Game = function () {
       });
 
       if (result) {
-        this.status = 0;
+        this.status = _enum.gameType.free;
+
+        // merge brick
+        this.mergeBrick();
+
+        // unload brick
+        this.unloadBrick();
       }
+    }
+
+    // 触底后进行合并，将之前的方块塞入背景中，移除方块的引用，等待新的方块
+
+  }, {
+    key: 'mergeBrick',
+    value: function mergeBrick() {
+      var _this2 = this;
+
+      var matrix = this.matrix,
+          blend = this.blend,
+          position = this.position,
+          status = this.status;
+
+
+      if (!position || status !== _enum.gameType.free) return;
+
+      var _position5 = _slicedToArray(position, 2),
+          x = _position5[0],
+          y = _position5[1];
+
+      blend && blend.forEach(function (row, rowIndex) {
+        row.forEach(function (col, colIndex) {
+          var yPos = rowIndex + y;
+          var xPos = colIndex + x;
+          if (col) {
+            _this2.oldMatrix[yPos][xPos] = _this2.matrix[yPos][xPos] = _enum.pointType.oldBrick;
+          }
+        });
+      });
+    }
+  }, {
+    key: 'unloadBrick',
+    value: function unloadBrick() {
+      this.brick = null;
+      this.blend = null;
+      this.position = null;
+      this.nextPosition = null;
     }
   }, {
     key: 'log',
@@ -532,7 +732,76 @@ var Game = function () {
 exports.default = Game;
 
 /***/ }),
-/* 4 */
+/* 8 */,
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+module.exports = function (obj) {
+  var newObj = {};
+
+  Object.entries(Object.assign(newObj, obj)).forEach(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+        value = _ref2[0],
+        key = _ref2[1];
+
+    return newObj[key] = value;
+  });
+
+  return newObj;
+};
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+/**
+ * 一个针对性很强的深拷贝
+ * @param {matrix} arg
+ */
+module.exports = function (arg /*: matrix*/) /*: matrix*/ {
+  return [].concat(_toConsumableArray(arg.map(function (row /*: arr*/) /*: arr*/ {
+    return [].concat(_toConsumableArray(row));
+  })));
+};
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (arg /*: matrix*/) /*: matrix*/ {
+  var rowLen = arg.length;
+  var colLen = arg[0].length;
+
+  var newArg = new Array(colLen).fill(0).map(function (_) {
+    return new Array(rowLen).fill(0);
+  });
+
+  arg = [].concat(arg).reverse();
+
+  newArg.forEach(function (row, rowIndex) {
+    row.forEach(function (_, col) {
+      newArg[rowIndex][col] = arg[col][rowIndex];
+    });
+  });
+
+  return newArg;
+};
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -557,7 +826,7 @@ var oldRuntime = hadRuntime && g.regeneratorRuntime;
 // Force reevalutation of runtime.js.
 g.regeneratorRuntime = undefined;
 
-module.exports = __webpack_require__(5);
+module.exports = __webpack_require__(13);
 
 if (hadRuntime) {
   // Restore the original runtime.
@@ -573,7 +842,7 @@ if (hadRuntime) {
 
 
 /***/ }),
-/* 5 */
+/* 13 */
 /***/ (function(module, exports) {
 
 /**
@@ -1306,106 +1575,40 @@ if (hadRuntime) {
 
 
 /***/ }),
-/* 6 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(2);
+module.exports = __webpack_require__(4);
 
 
 /***/ }),
-/* 7 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _deepCopy = __webpack_require__(8);
-
-Object.defineProperty(exports, 'deepCopy', {
-  enumerable: true,
-  get: function get() {
-    return _interopRequireDefault(_deepCopy).default;
-  }
-});
-
-var _buildEnum = __webpack_require__(16);
-
-Object.defineProperty(exports, 'buildEnum', {
-  enumerable: true,
-  get: function get() {
-    return _interopRequireDefault(_buildEnum).default;
-  }
-});
-
-var _rotateArray = __webpack_require__(10);
-
-Object.defineProperty(exports, 'rotateArray', {
-  enumerable: true,
-  get: function get() {
-    return _interopRequireDefault(_rotateArray).default;
-  }
-});
-
-var _bottomLineIndex = __webpack_require__(9);
-
-Object.defineProperty(exports, 'bottomLineIndex', {
-  enumerable: true,
-  get: function get() {
-    return _interopRequireDefault(_bottomLineIndex).default;
-  }
-});
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-/**
- * 一个针对性很强的深拷贝
- * @param {matrix} arg
- */
-module.exports = function (arg /*: matrix*/) /*: matrix*/ {
-  return [].concat(_toConsumableArray(arg.map(function (row /*: arr*/) /*: arr*/ {
-    return [].concat(_toConsumableArray(row));
-  })));
-};
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _ = __webpack_require__(7);
+var _ = __webpack_require__(0);
 
 var cache = {}; // 添加一个缓存对象
 
-module.exports = function (arg /*: matrix*/) {
+module.exports = function (arg /*: matrix*/, bottom /*: boolean*/) {
   var key = matrixString(arg);
 
   if (cache[key]) return cache[key];
 
-  return cache[key] = (0, _.rotateArray)(arg).map(filterIndex);
+  return cache[key] = (0, _.rotateArray)(arg).map(filterIndex(bottom));
 };
 
 /**
  * 获取每一列对应的下标
- * @param {arr} row
+ * @param {boolean} bottom
  */
-function filterIndex(row /*: arr*/) /*: number*/ {
-  var result = getIndex(row);
-  return result >= 0 ? row.length - result : result;
+function filterIndex(bottom /*: boolean*/) {
+  return function (row /*: arr*/) /*: number*/ {
+    var result = getIndex(bottom ? row : [].concat(row).reverse());
+    return bottom ? result >= 0 ? row.length - result : result : result;
+  };
 }
 
 /**
@@ -1430,121 +1633,6 @@ function matrixString(arr /*: matrix*/) /*: string*/ {
     return row.join('');
   }).join('|');
 }
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function (arg /*: matrix*/) /*: matrix*/ {
-  var rowLen = arg.length;
-  var colLen = arg[0].length;
-
-  var newArg = new Array(colLen).fill(0).map(function (_) {
-    return new Array(rowLen).fill(0);
-  });
-
-  arg = [].concat(arg).reverse();
-
-  newArg.forEach(function (row, rowIndex) {
-    row.forEach(function (_, col) {
-      newArg[rowIndex][col] = arg[col][rowIndex];
-    });
-  });
-
-  return newArg;
-};
-
-/***/ }),
-/* 11 */,
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _utils = __webpack_require__(7);
-
-var obj = {
-  start: 1,
-  over: 0
-};
-
-module.exports = (0, _utils.buildEnum)(obj);
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _gameType = __webpack_require__(12);
-
-Object.defineProperty(exports, 'gameType', {
-  enumerable: true,
-  get: function get() {
-    return _interopRequireDefault(_gameType).default;
-  }
-});
-
-var _pointType = __webpack_require__(14);
-
-Object.defineProperty(exports, 'pointType', {
-  enumerable: true,
-  get: function get() {
-    return _interopRequireDefault(_pointType).default;
-  }
-});
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _utils = __webpack_require__(7);
-
-var obj = {
-  empty: 0,
-  newBrick: 1,
-  oldBrick: 2
-};
-
-module.exports = (0, _utils.buildEnum)(obj);
-
-/***/ }),
-/* 15 */,
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-module.exports = function (obj) {
-  var newObj = {};
-
-  Object.entries(Object.assign(newObj, obj)).forEach(function (_ref) {
-    var _ref2 = _slicedToArray(_ref, 2),
-        value = _ref2[0],
-        key = _ref2[1];
-
-    return newObj[key] = value;
-  });
-
-  return newObj;
-};
 
 /***/ })
 /******/ ]);

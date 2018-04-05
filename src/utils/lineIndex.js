@@ -2,21 +2,23 @@ import { rotateArray } from '.'
 
 let cache = {} // 添加一个缓存对象
 
-module.exports = function(arg: matrix) {
+module.exports = function(arg: matrix, bottom: boolean) {
   let key = matrixString(arg)
 
   if (cache[key]) return cache[key]
 
-  return (cache[key] = rotateArray(arg).map(filterIndex))
+  return (cache[key] = rotateArray(arg).map(filterIndex(bottom)))
 }
 
 /**
  * 获取每一列对应的下标
- * @param {arr} row
+ * @param {boolean} bottom
  */
-function filterIndex(row: arr): number {
-  let result = getIndex(row)
-  return result >= 0 ? row.length - result : result
+function filterIndex(bottom: boolean) {
+  return function(row: arr): number {
+    let result = getIndex(bottom ? row : [].concat(row).reverse())
+    return bottom ? (result >= 0 ? row.length - result : result) : result
+  }
 }
 
 /**

@@ -1,7 +1,7 @@
 // @flow
 
 import Brick from './Brick'
-import { deepCopy, bottomLineIndex } from '../utils'
+import { deepCopy, lineIndex } from '../utils'
 import { pointType, gameType } from '../enum'
 
 // 游戏的核心控制
@@ -10,11 +10,12 @@ export default class Game {
   width: number
   height: number
   status: number
-  position: pos
-  brick: Brick
+  position: pos | null
+  nextPosition: pos | null
+  brick: Brick | null
   matrix: matrix
   oldMatrix: matrix
-  blend: matrix
+  blend: matrix | null
 
   constructor(
     configs: Object = {
@@ -42,6 +43,9 @@ export default class Game {
       .map((_: number): arr => new Array(this.width).fill(pointType.empty))
 
     // test
+    this.oldMatrix[this.height - 2] = new Array(this.width).fill(
+      pointType.oldBrick
+    )
     this.oldMatrix[this.height - 1] = new Array(this.width).fill(
       pointType.oldBrick
     )
@@ -54,10 +58,11 @@ export default class Game {
     if (status === gameType.over) return
 
     this.brick = brick
-    this.position = position
+    this.nextPosition = position
+    this.status = gameType.running
 
     let blend = (this.blend = brick.getShape())
-    let [x, y: string] = position
+    let [x, y] = position
 
     // can not put
     if (
@@ -68,15 +73,17 @@ export default class Game {
         )
       )
     ) {
-      throw new Error('can not load new brick')
+      this.status = gameType.over
+      return
+      // throw new Error('can not load new brick')
     }
 
-    this.setup()
+    this.updateMatrix()
   }
 
   // 更新当前brick的位置
-  updateMatrix(nextPosition: pos) {
-    let { oldMatrix, status } = this
+  updateMatrix() {
+    let { oldMatrix, nextPosition, status } = this
 
     if (status === gameType.over) return
 
@@ -86,8 +93,12 @@ export default class Game {
     this.setup()
   }
 
+  // 将当前活动的方块装载到矩阵中
   setup() {
     let { matrix, position, blend } = this
+
+    if (!blend || !position) return
+
     let [x, y] = position
 
     // put brick
@@ -104,56 +115,96 @@ export default class Game {
   async move(pos: 'down' | 'left' | 'right' | 'bottom') {
     let { position, brick, height, width, matrix, blend, status } = this
 
-    if (status === gameType.over) return
+    if (!position || !brick || !blend || status === gameType.over) return
 
     let [x, y] = position
-    let nextPosition = null
+    this.nextPosition = null
     switch (pos) {
       case 'down':
-        nextPosition = [x, y + 1]
+        this.nextPosition = [x, y + 1]
         break
       case 'left':
         if (x <= 0) return
-        nextPosition = [x - 1, y]
+        this.nextPosition = [x - 1, y]
         break
       case 'right':
         if (x >= width - blend[0].length) return
-        nextPosition = [x + 1, y]
+        this.nextPosition = [x + 1, y]
         break
       case 'bottom':
-        nextPosition = [x, height - blend.length]
+        let topLine = lineIndex(this.oldMatrix, false)
+        let deep = Math.min.apply(
+          Math,
+          lineIndex(this.blend, true).map(
+            (deep, colIndex) => topLine[x + colIndex] - deep
+          )
+        )
+        this.nextPosition = [x, deep]
         break
       case 'rotate':
-        nextPosition = position
+        this.nextPosition = position
         brick.rotate()
         this.blend = brick.getShape()
         break
       default:
         return
     }
-    await brick.move(nextPosition)
-    this.updateMatrix(nextPosition)
+    this.nextPosition && (await brick.move(this.nextPosition))
+    this.updateMatrix()
   }
 
   // 触底检测
   bottomDetection() {
     let { matrix, position, status } = this
 
-    if (status === gameType.over) return
+    if (!position || status === gameType.over) return
 
-    let [x, y] = this.position
-    let blIndex = bottomLineIndex(this.blend) // 这里边获取的下标 + 当前方块的坐标，如果对应的在矩阵中有值，就说明触底了。
+    let [x, y] = position
+    let blIndex = lineIndex(this.blend, true) // 这里边获取的下标 + 当前方块的坐标，如果对应的在矩阵中有值，就说明触底了。
 
-    let blPos = blIndex.map(index => [x, y + index])
+    let blPos = blIndex.map((index, colIndex) => [x + colIndex, y + index])
 
-    this.log.call({ matrix: blPos })
     let result = blPos.some(
       ([col, row]) => matrix[row][col] === pointType.oldBrick
     )
 
     if (result) {
-      this.status = 0
+      this.status = gameType.free
+
+      // merge brick
+      this.mergeBrick()
+
+      // unload brick
+      this.unloadBrick()
     }
+  }
+
+  // 触底后进行合并，将之前的方块塞入背景中，移除方块的引用，等待新的方块
+  mergeBrick() {
+    let { matrix, blend, position, status } = this
+
+    if (!position || status !== gameType.free) return
+
+    let [x, y] = position
+
+    blend &&
+      blend.forEach((row, rowIndex) => {
+        row.forEach((col, colIndex) => {
+          let yPos = rowIndex + y
+          let xPos = colIndex + x
+          if (col) {
+            this.oldMatrix[yPos][xPos] = this.matrix[yPos][xPos] =
+              pointType.oldBrick
+          }
+        })
+      })
+  }
+
+  unloadBrick() {
+    this.brick = null
+    this.blend = null
+    this.position = null
+    this.nextPosition = null
   }
 
   log() {
