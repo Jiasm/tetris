@@ -43,11 +43,12 @@ function refreshMatrix() {
 }
 
 function loadBrick() {
+  let shape = getShape()
   let brick = new Brick({
-    shape: getShape()
+    shape
   })
 
-  game.loadBrick(brick, [0, 0])
+  game.loadBrick(brick, [(Math.random() * (8 - shape.length + 1)) | 0, 0])
 }
 
 // test shape

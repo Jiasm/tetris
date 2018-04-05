@@ -622,11 +622,12 @@ function refreshMatrix() {
 }
 
 function loadBrick() {
+  var shape = (0, _data.getShape)();
   var brick = new _Brick2.default({
-    shape: (0, _data.getShape)()
+    shape: shape
   });
 
-  game.loadBrick(brick, [0, 0]);
+  game.loadBrick(brick, [Math.random() * (8 - shape.length + 1) | 0, 0]);
 }
 
 // test shape
