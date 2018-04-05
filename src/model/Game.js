@@ -1,7 +1,7 @@
 // @flow
 
 import Brick from './Brick'
-import { deepCopy, lineIndex } from '../utils'
+import { deepCopy, lineIndex, rotateArray } from '../utils'
 import { pointType, gameType } from '../enum'
 
 // 游戏的核心控制
@@ -16,26 +16,24 @@ export default class Game {
   matrix: matrix
   oldMatrix: matrix
   blend: matrix | null
+  oldBrickColor: string
+  backColor: string
 
   constructor(
     configs: Object = {
       width: 8,
-      height: 20
+      height: 20,
+      oldBrickColor: '#4caf50',
+      backColor: '#9e9e9e'
     }
   ) {
     this.width = configs.width
     this.height = configs.height
+    this.oldBrickColor = configs.oldBrickColor
+    this.backColor = configs.backColor
   }
 
   init() {
-    // width: 2 height: 4
-    // [
-    //   [0, 0],
-    //   [0, 0],
-    //   [0, 0],
-    //   [0, 0]
-    // ]
-
     this.status = gameType.start
 
     this.oldMatrix = new Array(this.height)
@@ -43,12 +41,10 @@ export default class Game {
       .map((_: number): arr => new Array(this.width).fill(pointType.empty))
 
     // test
-    this.oldMatrix[this.height - 2] = new Array(this.width).fill(
-      pointType.oldBrick
-    )
-    this.oldMatrix[this.height - 1] = new Array(this.width).fill(
-      pointType.oldBrick
-    )
+    // this.oldMatrix.map((row, rowIndex) => {
+    //   row[6] = pointType.oldBrick
+    // })
+    // test end
     this.matrix = deepCopy(this.oldMatrix)
   }
 
@@ -66,16 +62,17 @@ export default class Game {
 
     // can not put
     if (
-      blend.some((arr: arr, row: number): boolean =>
-        arr.some(
-          (item: number, col: number): boolean =>
-            !!(item && matrix[row + y][col + x])
-        )
+      blend.some(
+        (arr: arr, row: number): boolean =>
+          !!arr &&
+          arr.some((item: number, col: number): boolean => {
+            let matrixRow = matrix[row + y]
+            return !!(item && matrixRow && matrixRow[col + x])
+          })
       )
     ) {
       this.status = gameType.over
       return
-      // throw new Error('can not load new brick')
     }
 
     this.updateMatrix()
@@ -102,113 +99,202 @@ export default class Game {
     let [x, y] = position
 
     // put brick
-    blend.forEach((arr: arr, row: number): void =>
-      arr.forEach(
-        (item: number, col: number): any =>
-          item && (matrix[row + y][col + x] = item)
-      )
+    blend.forEach(
+      (arr: arr, row: number) =>
+        arr &&
+        arr.forEach((item: number, col: number) => {
+          let matrixRow = matrix[row + y]
+          if (item && matrixRow) {
+            matrixRow[col + x] = item
+          }
+        })
     )
-
-    this.bottomDetection()
   }
 
-  async move(pos: 'down' | 'left' | 'right' | 'bottom') {
-    let { position, brick, height, width, matrix, blend, status } = this
+  // 进行移动的操作
+  move(pos: 'down' | 'left' | 'right' | 'bottom') {
+    let {
+      position,
+      brick,
+      height,
+      width,
+      matrix,
+      oldMatrix,
+      blend,
+      status
+    } = this
 
     if (!position || !brick || !blend || status === gameType.over) return
+
+    let firstRow = blend[0]
+
+    if (!firstRow) return
+
+    let brickWidth = firstRow.length
 
     let [x, y] = position
     this.nextPosition = null
     switch (pos) {
-      case 'down':
+      case 'down': // 自然下降
         this.nextPosition = [x, y + 1]
         break
-      case 'left':
-        if (x <= 0) return
+      case 'left': // 左移
+        if (
+          x <= 0 ||
+          blend.some((row, rowIndex) => {
+            let _pos = oldMatrix[y + rowIndex]
+            return row && row[0] && _pos && _pos[x - 1]
+          })
+        )
+          return // 左侧有障碍物，无法移动
         this.nextPosition = [x - 1, y]
         break
-      case 'right':
-        if (x >= width - blend[0].length) return
+      case 'right': // 右移
+        if (
+          x >= width - brickWidth ||
+          blend.some((row, rowIndex) => {
+            let _pos = oldMatrix[y + rowIndex]
+            return row && row[brickWidth - 1] && _pos && _pos[x + brickWidth]
+          })
+        )
+          return // 右侧有障碍物，无法移动
         this.nextPosition = [x + 1, y]
         break
-      case 'bottom':
+      case 'bottom': // 下降到底部
         let topLine = lineIndex(this.oldMatrix, false)
         let deep = Math.min.apply(
           Math,
-          lineIndex(this.blend, true).map(
-            (deep, colIndex) => topLine[x + colIndex] - deep
-          )
-        )
+          lineIndex(this.blend, true).map((deep, colIndex) => {
+            return topLine[x + colIndex] - deep
+          })
+        ) // 获取最多可以下降到的坐标
         this.nextPosition = [x, deep]
         break
-      case 'rotate':
-        this.nextPosition = position
-        brick.rotate()
-        this.blend = brick.getShape()
+      case 'rotate': // 旋转
+        let newBlend = rotateArray(this.blend)
+
+        let newFirstRow = newBlend[0]
+
+        let rangeLen = newFirstRow ? newFirstRow.length + x - width : 0
+
+        if (
+          newBlend.some((row, rowIndex) => {
+            let _pos = oldMatrix[y + rowIndex]
+            return (
+              row &&
+              _pos &&
+              row.some((col, colIndex) => col && _pos[colIndex + x])
+            )
+          })
+        ) {
+          return // console.log('有障碍物')
+        } else if (rangeLen > 0) {
+          this.nextPosition = [x - rangeLen, y]
+        } else {
+          this.nextPosition = position
+        }
+
+        this.blend = newBlend
         break
       default:
+        // 其余情况不处理
         return
     }
-    this.nextPosition && (await brick.move(this.nextPosition))
     this.updateMatrix()
+
+    this.bottomDetection()
   }
 
   // 触底检测
   bottomDetection() {
-    let { matrix, position, status } = this
+    let { matrix, position, status, blend, height } = this
 
-    if (!position || status === gameType.over) return
+    if (!blend || !position || status === gameType.over) return
 
     let [x, y] = position
-    let blIndex = lineIndex(this.blend, true) // 这里边获取的下标 + 当前方块的坐标，如果对应的在矩阵中有值，就说明触底了。
+    let blIndex = lineIndex(blend, true) // 这里边获取的下标 + 当前方块的坐标，如果对应的在矩阵中有值，就说明触底了。
 
     let blPos = blIndex.map((index, colIndex) => [x + colIndex, y + index])
 
     let result = blPos.some(
-      ([col, row]) => matrix[row][col] === pointType.oldBrick
+      ([col, row]) => row === height || matrix[row][col] === pointType.oldBrick
     )
 
     if (result) {
-      this.status = gameType.free
-
       // merge brick
       this.mergeBrick()
 
       // unload brick
       this.unloadBrick()
+
+      this.removeFullLine()
     }
   }
 
   // 触底后进行合并，将之前的方块塞入背景中，移除方块的引用，等待新的方块
   mergeBrick() {
-    let { matrix, blend, position, status } = this
+    let { matrix, oldMatrix, blend, position, status } = this
 
-    if (!position || status !== gameType.free) return
+    if (!position || !blend) return
 
     let [x, y] = position
 
-    blend &&
-      blend.forEach((row, rowIndex) => {
+    blend.forEach((row, rowIndex) => {
+      row &&
         row.forEach((col, colIndex) => {
           let yPos = rowIndex + y
           let xPos = colIndex + x
-          if (col) {
-            this.oldMatrix[yPos][xPos] = this.matrix[yPos][xPos] =
-              pointType.oldBrick
+
+          let oldMatrixRow = this.oldMatrix[yPos]
+          let matrixRow = this.matrix[yPos]
+          if (col && oldMatrixRow && matrixRow) {
+            oldMatrixRow[xPos] = matrixRow[xPos] = pointType.oldBrick
           }
         })
-      })
+    })
   }
 
+  // 移除整行的方块
+  removeFullLine() {
+    let { oldMatrix, width } = this
+
+    let fullLineCount = 0
+    oldMatrix.forEach((row, rowIndex) => {
+      if (
+        !!row &&
+        row.every(_ => _ === pointType.oldBrick || _ === pointType.newBrick)
+      ) {
+        oldMatrix[rowIndex] = null
+        fullLineCount++
+      }
+    })
+
+    // 如果有移除的行
+    if (fullLineCount) {
+      this.oldMatrix = new Array(fullLineCount)
+        .fill(0)
+        .map(_ => new Array(width).fill(pointType.empty))
+        .concat(oldMatrix.filter(_ => _))
+      this.updateMatrix()
+    }
+  }
+
+  // 卸载方块
   unloadBrick() {
+    this.status = gameType.free
     this.brick = null
     this.blend = null
     this.position = null
     this.nextPosition = null
   }
 
+  // 调试用的方法，也可以作为console版本游戏来看待
   log() {
     console.clear()
-    console.log(this.matrix.map((arr: arr): string => arr.join('')).join('\n'))
+    console.log(
+      this.matrix
+        .map((arr: arr): string => (arr ? arr.join('') : ''))
+        .join('\n')
+    )
   }
 }

@@ -1,4 +1,4 @@
-import { buildEnum } from '../utils'
+import buildEnum from './buildEnum'
 
 let obj = {
   start: 1,

@@ -3,14 +3,17 @@
 import Game from './model/Game'
 import Brick from './model/Brick'
 import { pointType, gameType } from './enum'
+import { RenderCanvas } from './view'
+import { getShape } from './data'
 
 let game = new Game()
+let renderCanvas = new RenderCanvas(document.getElementById('canvas'))
 
 game.init()
 loadBrick()
-game.log()
+renderCanvas.render(game)
 
-window.addEventListener('keyup', async function(e: KeyboardEvent) {
+window.addEventListener('keyup', function(e: KeyboardEvent) {
   if (game.status === gameType.over) return
   let arrow = {
     '83': 'bottom',
@@ -19,28 +22,40 @@ window.addEventListener('keyup', async function(e: KeyboardEvent) {
     '87': 'rotate'
   }
 
-  await game.move(arrow[e.keyCode])
-  game.log()
+  game.move(arrow[e.keyCode])
+  renderCanvas.render(game)
+  if (game.status === gameType.free) {
+    // refreshMatrix()
+  }
 })
 
-let interval = setInterval(async () => {
+let interval = setInterval(refreshMatrix, 500)
+
+function refreshMatrix() {
   if (game.status === gameType.free) {
     loadBrick()
   } else if (game.status === gameType.over) {
-    clearInterval(interval)
+    // clearInterval(interval)
   } else {
-    await game.move('down')
+    game.move('down')
   }
-  game.log()
-}, 1000)
+  renderCanvas.render(game)
+}
 
 function loadBrick() {
   let brick = new Brick({
-    shape: [
-      [pointType.newBrick, pointType.newBrick, pointType.newBrick],
-      [pointType.empty, pointType.empty, pointType.newBrick]
-    ]
+    shape: getShape()
   })
 
   game.loadBrick(brick, [0, 0])
 }
+
+// test shape
+// [
+//   [
+//     pointType.newBrick,
+//     pointType.newBrick,
+//     pointType.newBrick,
+//     pointType.newBrick
+//   ]
+// ]

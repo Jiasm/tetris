@@ -1,11 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0"/>
-    <title>tetris</title>
-  </head>
-  <body>
 
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0" />
+  <title>tetris</title>
+  <style>
+    * {
+      margin: 0;
+    }
+
+    .game-panel {
+      position: relative;
+    }
+
+    .ghost-canvas {
+      position: absolute;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="game-panel">
+    <canvas width="160" height="400" id="canvas"></canvas>
+  </div>
+</body>
+
 </html>
