@@ -604,7 +604,7 @@ window.addEventListener('keyup', function (e /*: KeyboardEvent*/) {
   game.move(arrow[e.keyCode]);
   renderCanvas.render(game);
   if (game.status === _enum.gameType.free) {
-    // refreshMatrix()
+    refreshMatrix();
   }
 });
 
@@ -614,7 +614,7 @@ function refreshMatrix() {
   if (game.status === _enum.gameType.free) {
     loadBrick();
   } else if (game.status === _enum.gameType.over) {
-    // clearInterval(interval)
+    clearInterval(interval);
   } else {
     game.move('down');
   }
@@ -629,6 +629,17 @@ function loadBrick() {
 
   game.loadBrick(brick, [Math.random() * (8 - shape.length + 1) | 0, 0]);
 }
+
+document.querySelectorAll('.controller-btn').forEach(function (item) {
+  item.addEventListener('click', function (e /*: any*/) {
+    var type = e.target.dataset.type;
+
+    if (['bottom', 'rotate', 'left', 'right'].includes(type)) {
+      game.move(type);
+      renderCanvas.render(game);
+    }
+  });
+});
 
 // test shape
 // [

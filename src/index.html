@@ -10,12 +10,32 @@
       margin: 0;
     }
 
+    body {
+      width: 480px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
     .game-panel {
       position: relative;
+      width: 160px;
+      margin: 0 auto;
     }
 
     .ghost-canvas {
       position: absolute;
+    }
+
+    .controller {
+      width: 160px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .controller-btn {
+      /* display: block; */
+      padding: .5em 1.5em;
+      margin-bottom: .5em;
     }
   </style>
 </head>
@@ -25,6 +45,14 @@
     <canvas width="160" height="400" id="canvas"></canvas>
   </div>
   <p>WASD控制左右旋转下降</p>
+  <div id="controller" class="controller">
+    <button class="controller-btn" data-type="rotate">旋转</button>
+    <br/>
+    <button class="controller-btn" data-type="left">左移</button>
+    <button class="controller-btn" data-type="right">右移</button>
+    <br/>
+    <button class="controller-btn" data-type="bottom">落底</button>
+  </div>
 </body>
 
 </html>
