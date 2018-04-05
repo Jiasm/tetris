@@ -884,6 +884,7 @@ var RenderCanvas = function () {
     this.context = canvas.getContext('2d');
     this.width = canvas.width;
     this.height = canvas.height;
+    this.backColor = 'gray';
 
     // clone elements
     var backCanvas = this.backCanvas = canvas.cloneNode(true);
@@ -906,6 +907,8 @@ var RenderCanvas = function () {
     brickCanvas.style.left = offsetLeft + 'px';
     brickCanvas.style.zIndex = '3';
     this.brickContext = brickCanvas.getContext('2d');
+
+    this.renderBack();
   }
 
   _createClass(RenderCanvas, [{
@@ -927,8 +930,6 @@ var RenderCanvas = function () {
       var firstLine = matrix[0];
 
       if (!firstLine) return;
-
-      this.renderBack(backColor);
 
       var cellWidth = width / firstLine.length;
       var cellHeight = height / matrix.length;
@@ -972,10 +973,10 @@ var RenderCanvas = function () {
   }, {
     key: 'renderBack',
     value: function renderBack() {
-      var backColor /*: string*/ = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'gray';
       var context = this.context,
           width = this.width,
-          height = this.height;
+          height = this.height,
+          backColor = this.backColor;
 
 
       context.fillStyle = backColor;

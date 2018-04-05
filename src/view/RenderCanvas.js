@@ -13,6 +13,7 @@ export default class RenderCanvas {
   width: number
   height: number
   lastBackPoints: string
+  backColor: string
 
   constructor(canvas: HTMLCanvasElement) {
     if (!canvas) return
@@ -21,6 +22,7 @@ export default class RenderCanvas {
     this.context = canvas.getContext('2d')
     this.width = canvas.width
     this.height = canvas.height
+    this.backColor = 'gray'
 
     // clone elements
     let backCanvas = (this.backCanvas = canvas.cloneNode(true))
@@ -47,6 +49,8 @@ export default class RenderCanvas {
     brickCanvas.style.left = offsetLeft + 'px'
     brickCanvas.style.zIndex = '3'
     this.brickContext = brickCanvas.getContext('2d')
+
+    this.renderBack()
   }
 
   render(game: Game) {
@@ -58,8 +62,6 @@ export default class RenderCanvas {
     let firstLine = matrix[0]
 
     if (!firstLine) return
-
-    this.renderBack(backColor)
 
     let cellWidth = width / firstLine.length
     let cellHeight = height / matrix.length
@@ -110,8 +112,8 @@ export default class RenderCanvas {
     })
   }
 
-  renderBack(backColor: string = 'gray') {
-    let { context, width, height } = this
+  renderBack() {
+    let { context, width, height, backColor } = this
 
     context.fillStyle = backColor
     context.fillRect(0, 0, width, height)
