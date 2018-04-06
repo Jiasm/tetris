@@ -59,7 +59,8 @@ body {
   height: 240px;
   width: 100%;
   margin: 0 auto;
-  text-align: center; }
+  text-align: center;
+  z-index: 7; }
 
 .start-wrap {
   width: 120px;
