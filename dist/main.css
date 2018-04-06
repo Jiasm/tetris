@@ -1,0 +1,102 @@
+* {
+  margin: 0;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
+body {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  position: absolute;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 20px 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  text-align: center;
+  background-color: #9E9E9E; }
+  @media all and (orientation: landscape) {
+    body {
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+      flex-direction: row;
+      max-width: 640px; } }
+
+.game {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1; }
+  .game canvas {
+    display: block;
+    margin: 0 auto; }
+
+.ghost-canvas {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%); }
+
+.btn-wrap {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 20px 0; }
+
+.controller {
+  height: 240px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center; }
+
+.start-wrap {
+  width: 120px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center; }
+
+.operate-wrap {
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1; }
+
+.controller-btn {
+  padding: 1em 1.5em;
+  margin-bottom: .5em;
+  border: none;
+  background-color: #1976D2;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 14px; }
+
+.pause-btn,
+.continue-btn {
+  display: none; }
+
+.tips {
+  margin: 1em 0;
+  font-size: 12px;
+  color: #ccc; }
+
+.score {
+  font-size: 18px; }
+
+/*# sourceMappingURL=main.css.map*/

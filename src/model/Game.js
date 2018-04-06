@@ -18,19 +18,13 @@ export default class Game {
   blend: matrix | null
   oldBrickColor: string
   backColor: string
+  removeLines: number
 
-  constructor(
-    configs: Object = {
-      width: 8,
-      height: 20,
-      oldBrickColor: '#4caf50',
-      backColor: '#9e9e9e'
-    }
-  ) {
-    this.width = configs.width
-    this.height = configs.height
-    this.oldBrickColor = configs.oldBrickColor
-    this.backColor = configs.backColor
+  constructor(configs: Object = {}) {
+    this.width = configs.width || 8
+    this.height = configs.height || 20
+    this.oldBrickColor = configs.oldBrickColor || '#4caf50'
+    this.backColor = configs.backColor || '#9e9e9e'
   }
 
   init() {
@@ -46,6 +40,7 @@ export default class Game {
     // })
     // test end
     this.matrix = deepCopy(this.oldMatrix)
+    this.removeLines = 0
   }
 
   loadBrick(brick: Brick, position: pos) {
@@ -276,6 +271,8 @@ export default class Game {
         .map(_ => new Array(width).fill(pointType.empty))
         .concat(oldMatrix.filter(_ => _))
       this.updateMatrix()
+
+      this.removeLines += fullLineCount
     }
   }
 

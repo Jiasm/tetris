@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "./dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 17);
+/******/ 	return __webpack_require__(__webpack_require__.s = 20);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -77,7 +77,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _deepCopy = __webpack_require__(10);
+var _deepCopy = __webpack_require__(13);
 
 Object.defineProperty(exports, 'deepCopy', {
   enumerable: true,
@@ -86,7 +86,7 @@ Object.defineProperty(exports, 'deepCopy', {
   }
 });
 
-var _lineIndex = __webpack_require__(12);
+var _lineIndex = __webpack_require__(14);
 
 Object.defineProperty(exports, 'lineIndex', {
   enumerable: true,
@@ -95,7 +95,7 @@ Object.defineProperty(exports, 'lineIndex', {
   }
 });
 
-var _rotateArray = __webpack_require__(14);
+var _rotateArray = __webpack_require__(16);
 
 Object.defineProperty(exports, 'rotateArray', {
   enumerable: true,
@@ -104,7 +104,7 @@ Object.defineProperty(exports, 'rotateArray', {
   }
 });
 
-var _matrixString = __webpack_require__(13);
+var _matrixString = __webpack_require__(15);
 
 Object.defineProperty(exports, 'matrixString', {
   enumerable: true,
@@ -126,7 +126,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _gameType = __webpack_require__(7);
+var _gameType = __webpack_require__(10);
 
 Object.defineProperty(exports, 'gameType', {
   enumerable: true,
@@ -135,7 +135,7 @@ Object.defineProperty(exports, 'gameType', {
   }
 });
 
-var _pointType = __webpack_require__(8);
+var _pointType = __webpack_require__(11);
 
 Object.defineProperty(exports, 'pointType', {
   enumerable: true,
@@ -148,6 +148,29 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+module.exports = function (obj) {
+  var newObj = {};
+
+  Object.entries(Object.assign(newObj, obj)).forEach(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+        value = _ref2[0],
+        key = _ref2[1];
+
+    return newObj[key] = value;
+  });
+
+  return newObj;
+};
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -191,7 +214,7 @@ var Brick = function () {
 exports.default = Brick;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -205,7 +228,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Brick = __webpack_require__(2);
+var _Brick = __webpack_require__(3);
 
 var _Brick2 = _interopRequireDefault(_Brick);
 
@@ -221,19 +244,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // 用来进行方块数据的移动
 var Game = function () {
   function Game() {
-    var configs /*: Object*/ = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-      width: 8,
-      height: 20,
-      oldBrickColor: '#4caf50',
-      backColor: '#9e9e9e'
-    };
+    var configs /*: Object*/ = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
     _classCallCheck(this, Game);
 
-    this.width = configs.width;
-    this.height = configs.height;
-    this.oldBrickColor = configs.oldBrickColor;
-    this.backColor = configs.backColor;
+    this.width = configs.width || 8;
+    this.height = configs.height || 20;
+    this.oldBrickColor = configs.oldBrickColor || '#4caf50';
+    this.backColor = configs.backColor || '#9e9e9e';
   }
 
   _createClass(Game, [{
@@ -253,6 +271,7 @@ var Game = function () {
       // })
       // test end
       this.matrix = (0, _utils.deepCopy)(this.oldMatrix);
+      this.removeLines = 0;
     }
   }, {
     key: 'loadBrick',
@@ -529,6 +548,8 @@ var Game = function () {
           return _;
         }));
         this.updateMatrix();
+
+        this.removeLines += fullLineCount;
       }
     }
 
@@ -562,85 +583,216 @@ var Game = function () {
 exports.default = Game;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _Game = __webpack_require__(3);
+var _controller = __webpack_require__(6);
 
-var _Game2 = _interopRequireDefault(_Game);
+var _controller2 = _interopRequireDefault(_controller);
 
-var _Brick = __webpack_require__(2);
-
-var _Brick2 = _interopRequireDefault(_Brick);
-
-var _enum = __webpack_require__(1);
-
-var _view = __webpack_require__(16);
-
-var _data = __webpack_require__(5);
+__webpack_require__(19);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var game = new _Game2.default();
+// resize canvas
 
-var renderCanvas = new _view.RenderCanvas(document.getElementById('canvas'));
+var $game = document.getElementById('game');
+var $canvas = document.getElementById('canvas');
+var $controller = document.getElementById('controller');
 
-game.init();
-loadBrick();
-renderCanvas.render(game);
+var gamputedStyle = getComputedStyle($game);
+var gameHeight = parseInt(gamputedStyle.height);
+var gameWidth = gameHeight * 0.4;
 
-window.addEventListener('keyup', function (e /*: KeyboardEvent*/) {
-  if (game.status === _enum.gameType.over) return;
-  var arrow = {
-    '83': 'bottom',
-    '68': 'right',
-    '65': 'left',
-    '87': 'rotate'
-  };
+$game.style.height = gameHeight + 'px';
+$canvas.style.width = gameWidth + 'px';
+$canvas.style.height = gameHeight + 'px';
+$canvas.width = gameWidth;
+$canvas.height = gameHeight;
 
-  game.move(arrow[e.keyCode]);
-  renderCanvas.render(game);
-  if (game.status === _enum.gameType.free) {
-    refreshMatrix();
-  }
+new _controller2.default($canvas, {
+  handlerKeyboard: true,
+  board: [16, 40],
+  scoreBoard: document.querySelector('#score-val')
+}).start();
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
 
-var interval = setInterval(refreshMatrix, 500);
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-function refreshMatrix() {
-  if (game.status === _enum.gameType.free) {
-    loadBrick();
-  } else if (game.status === _enum.gameType.over) {
-    clearInterval(interval);
-  } else {
-    game.move('down');
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _model = __webpack_require__(12);
+
+var _enum = __webpack_require__(1);
+
+var _view = __webpack_require__(18);
+
+var _data = __webpack_require__(8);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Controller = function () {
+  function Controller($canvas /*: any*/) {
+    var config /*: Object*/ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    _classCallCheck(this, Controller);
+
+    if (!$canvas) throw new Error('can not get $canvas');
+
+    this.showKeyboard = config.showKeyboard;
+    this.handlerKeyboard = config.handlerKeyboard;
+    this.rate = config.rate || 500; // ms
+    this.scoreBoard = config.scoreBoard;
+
+    var _board = this.board = config.board || [8, 20],
+        _board2 = _slicedToArray(_board, 2),
+        width = _board2[0],
+        height = _board2[1]; // [width, height]
+
+    var game = this.game = new _model.Game({
+      width: width,
+      height: height
+    });
+    var renderCanvas = this.render = new _view.RenderCanvas($canvas);
+
+    game.init();
+    renderCanvas.init();
+    renderCanvas.loadGame(game);
   }
-  renderCanvas.render(game);
-}
 
-function loadBrick() {
-  var shape = (0, _data.getShape)();
-  var brick = new _Brick2.default({
-    shape: shape
-  });
+  _createClass(Controller, [{
+    key: 'refreshMatrix',
+    value: function refreshMatrix() {
+      var game = this.game,
+          render = this.render;
 
-  game.loadBrick(brick, [Math.random() * (8 - shape[0].length + 1) | 0, 0]);
-}
-
-document.querySelectorAll('.controller-btn').forEach(function (item) {
-  item.addEventListener('click', function (e /*: any*/) {
-    var type = e.target.dataset.type;
-
-    if (['bottom', 'rotate', 'left', 'right'].includes(type)) {
-      game.move(type);
-      renderCanvas.render(game);
+      if (game.status === _enum.gameType.free) {
+        this.loadBrick();
+      } else if (game.status === _enum.gameType.over) {
+        this.interval && clearInterval(this.interval);
+      } else {
+        game.move('down');
+      }
+      render.render();
+      this.scoreBoard.innerHTML = game.removeLines;
     }
-  });
-});
+  }, {
+    key: 'loadBrick',
+    value: function loadBrick() {
+      var game = this.game;
 
+      var shape = (0, _data.getShape)();
+      var brick = new _model.Brick({
+        shape: shape
+      });
+
+      game.loadBrick(brick, [Math.random() * (8 - shape[0].length + 1) | 0, 0]);
+    }
+  }, {
+    key: 'start',
+    value: function start() {
+      var _this = this;
+
+      var game = this.game,
+          render = this.render,
+          rate = this.rate,
+          handlerKeyboard = this.handlerKeyboard;
+
+
+      if (handlerKeyboard) {
+        window.addEventListener('keyup', function (e /*: KeyboardEvent*/) {
+          if (game.status === _enum.gameType.over) return;
+          var arrow = {
+            '83': 'bottom',
+            '68': 'right',
+            '65': 'left',
+            '87': 'rotate'
+          };
+
+          game.move(arrow[e.keyCode]);
+          render.render();
+          if (game.status === _enum.gameType.free) {
+            _this.refreshMatrix();
+          }
+        });
+      }
+
+      var show = function show(type) {
+        var tags = {
+          start: document.querySelector('.controller-btn[data-type="start"]'),
+          pause: document.querySelector('.controller-btn[data-type="pause"]'),
+          continue: document.querySelector('.controller-btn[data-type="continue"]')
+
+          // fucking stupid flowtype
+        };Object.entries(tags).map(function (_ref) {
+          var _ref2 = _slicedToArray(_ref, 2),
+              key = _ref2[0],
+              tag = _ref2[1];
+
+          type === key ? tag.style.display = 'block' : tag.style.display = 'none';
+        });
+      };
+
+      document.querySelectorAll('.controller-btn').forEach(function (item) {
+        item.addEventListener('ontouchend' in window ? 'touchend' : 'click', function (e /*: any*/) {
+          var type = e.target.dataset.type;
+
+
+          switch (type) {
+            case 'bottom':
+            case 'rotate':
+            case 'right':
+            case 'left':
+              if (_this.status === _enum.gameType.pause) return;
+              game.move(type);
+              render.render();
+              break;
+            case 'start':
+              _this.loadBrick();
+              render.render();
+
+              _this.interval = setInterval(_this.refreshMatrix.bind(_this), rate);
+              _this.status = _enum.gameType.running;
+              show('pause');
+              break;
+            case 'pause':
+              clearInterval(_this.interval);
+              _this.status = _enum.gameType.pause;
+              show('continue');
+              break;
+            case 'continue':
+              _this.interval = setInterval(_this.refreshMatrix.bind(_this), rate);
+              _this.status = _enum.gameType.running;
+              show('pause');
+              break;
+          }
+        });
+      });
+
+      // prevent scale
+      if ('ontouchend' in window) {
+        window.addEventListener('touchend', function (e) {
+          return e.preventDefault();
+        }, true);
+      }
+    }
+  }]);
+
+  return Controller;
+}();
 // test shape
 // [
 //   [
@@ -651,8 +803,11 @@ document.querySelectorAll('.controller-btn').forEach(function (item) {
 //   ]
 // ]
 
+
+exports.default = Controller;
+
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -662,7 +817,30 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _getShape = __webpack_require__(19);
+exports.default = function () {
+  return _shapes2.default[Math.random() * len | 0];
+};
+
+var _shapes = __webpack_require__(9);
+
+var _shapes2 = _interopRequireDefault(_shapes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var len = _shapes2.default.length;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _getShape = __webpack_require__(7);
 
 Object.defineProperty(exports, 'getShape', {
   enumerable: true,
@@ -674,7 +852,7 @@ Object.defineProperty(exports, 'getShape', {
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 6 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -700,13 +878,13 @@ shapes.forEach(function (item) {
 module.exports = shapes;
 
 /***/ }),
-/* 7 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _buildEnum = __webpack_require__(18);
+var _buildEnum = __webpack_require__(2);
 
 var _buildEnum2 = _interopRequireDefault(_buildEnum);
 
@@ -722,13 +900,13 @@ var obj = {
 module.exports = (0, _buildEnum2.default)(obj);
 
 /***/ }),
-/* 8 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _buildEnum = __webpack_require__(18);
+var _buildEnum = __webpack_require__(2);
 
 var _buildEnum2 = _interopRequireDefault(_buildEnum);
 
@@ -743,8 +921,38 @@ var obj = {
 module.exports = (0, _buildEnum2.default)(obj);
 
 /***/ }),
-/* 9 */,
-/* 10 */
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _Brick = __webpack_require__(3);
+
+Object.defineProperty(exports, 'Brick', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_Brick).default;
+  }
+});
+
+var _Game = __webpack_require__(4);
+
+Object.defineProperty(exports, 'Game', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_Game).default;
+  }
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -763,8 +971,7 @@ module.exports = function (arg /*: matrix*/) /*: matrix*/ {
 };
 
 /***/ }),
-/* 11 */,
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -807,7 +1014,7 @@ function getIndex(arr /*: arr*/) /*: number*/ {
 }
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -824,7 +1031,7 @@ exports.default = function (arr /*: matrix*/) /*: string*/ {
 };
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -850,7 +1057,7 @@ module.exports = function (arg /*: matrix*/) /*: matrix*/ {
 };
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -866,7 +1073,7 @@ var _enum = __webpack_require__(1);
 
 var _utils = __webpack_require__(0);
 
-var _Game = __webpack_require__(3);
+var _Game = __webpack_require__(4);
 
 var _Game2 = _interopRequireDefault(_Game);
 
@@ -881,58 +1088,82 @@ var RenderCanvas = function () {
     if (!canvas) return;
 
     this.canvas = canvas;
-    this.context = canvas.getContext('2d');
-    this.width = canvas.width;
-    this.height = canvas.height;
-    this.backColor = 'gray';
-
-    // clone elements
-    var backCanvas = this.backCanvas = canvas.cloneNode(true);
-    var offsetTop = canvas.offsetTop,
-        offsetLeft = canvas.offsetLeft;
-
-    backCanvas.setAttribute('id', (canvas.getAttribute('id') || '_canvas') + '_back');
-    canvas.parentElement && canvas.parentElement.appendChild(backCanvas);
-    backCanvas.style.position = 'absolute';
-    backCanvas.style.top = offsetTop + 'px';
-    backCanvas.style.left = offsetLeft + 'px';
-    backCanvas.style.zIndex = '2';
-    this.backContext = backCanvas.getContext('2d');
-
-    var brickCanvas = this.brickCanvas = canvas.cloneNode(true);
-    brickCanvas.setAttribute('id', (canvas.getAttribute('id') || '_canvas') + '_brick');
-    canvas.parentElement && canvas.parentElement.appendChild(brickCanvas);
-    brickCanvas.style.position = 'absolute';
-    brickCanvas.style.top = offsetTop + 'px';
-    brickCanvas.style.left = offsetLeft + 'px';
-    brickCanvas.style.zIndex = '3';
-    this.brickContext = brickCanvas.getContext('2d');
-
-    this.renderBack();
   }
 
   _createClass(RenderCanvas, [{
-    key: 'render',
-    value: function render(game /*: Game*/) {
-      var matrix = game.matrix,
-          brick = game.brick,
-          oldBrickColor = game.oldBrickColor,
-          backColor = game.backColor;
+    key: 'init',
+    value: function init() {
+      var canvas = this.canvas;
+
+      this.context = canvas.getContext('2d');
+      this.width = canvas.width;
+      this.height = canvas.height;
+      this.backColor = '#e0e0e0';
+
+      // clone elements
+      var backCanvas = this.backCanvas = canvas.cloneNode(true);
+      var offsetTop = canvas.offsetTop,
+          offsetLeft = canvas.offsetLeft;
+
+      backCanvas.setAttribute('id', (canvas.getAttribute('id') || '_canvas') + '_back');
+      backCanvas.className += ' ghost-canvas';
+      canvas.parentElement && canvas.parentElement.appendChild(backCanvas);
+      backCanvas.style.position = 'absolute';
+      // backCanvas.style.top = offsetTop + 'px'
+      // backCanvas.style.left = offsetLeft + 'px'
+      backCanvas.style.zIndex = '2';
+      this.backContext = backCanvas.getContext('2d');
+
+      var brickCanvas = this.brickCanvas = canvas.cloneNode(true);
+      brickCanvas.setAttribute('id', (canvas.getAttribute('id') || '_canvas') + '_brick');
+      brickCanvas.className += ' ghost-canvas';
+      canvas.parentElement && canvas.parentElement.appendChild(brickCanvas);
+      brickCanvas.style.position = 'absolute';
+      // brickCanvas.style.top = offsetTop + 'px'
+      // brickCanvas.style.left = offsetLeft + 'px'
+      brickCanvas.style.zIndex = '3';
+      this.brickContext = brickCanvas.getContext('2d');
+    }
+  }, {
+    key: 'loadGame',
+    value: function loadGame(game /*: Game*/) {
       var width = this.width,
-          height = this.height,
-          context = this.context,
-          backContext = this.backContext,
-          brickContext = this.brickContext;
+          height = this.height;
 
-
-      if (!matrix) return;
+      var _game = this.game = game,
+          matrix = _game.matrix;
 
       var firstLine = matrix[0];
 
       if (!firstLine) return;
 
-      var cellWidth = width / firstLine.length;
-      var cellHeight = height / matrix.length;
+      this.cellWidth = width / firstLine.length;
+      this.cellHeight = height / matrix.length;
+
+      this.renderBack();
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var game = this.game,
+          width = this.width,
+          height = this.height,
+          context = this.context,
+          backContext = this.backContext,
+          brickContext = this.brickContext,
+          cellWidth = this.cellWidth,
+          cellHeight = this.cellHeight;
+
+
+      if (!game) throw new Error('load game first');
+
+      var matrix = game.matrix,
+          brick = game.brick,
+          oldBrickColor = game.oldBrickColor,
+          backColor = game.backColor;
+
+
+      if (!matrix) return;
 
       var _ref = brick || {},
           brickColor = _ref.color;
@@ -952,20 +1183,33 @@ var RenderCanvas = function () {
       this.cleanBrick();
 
       // render brick
+      brickContext.lineWidth = 1;
       matrix.forEach(function (row, rowIndex) {
         row && row.forEach(function (col, colIndex) {
+          var $context = null;
+          var fillStyle = null;
+          var strokeStyle = null;
           switch (col) {
             case _enum.pointType.newBrick:
-              brickContext.fillStyle = brickColor;
-              brickContext.fillRect(colIndex * cellWidth, rowIndex * cellHeight, cellWidth, cellHeight);
+              $context = brickContext;
+              fillStyle = brickColor;
+              strokeStyle = '#000';
               break;
             case _enum.pointType.oldBrick:
-              backContext.fillStyle = oldBrickColor;
-
-              backContext.fillRect(colIndex * cellWidth, rowIndex * cellHeight, cellWidth, cellHeight);
+              $context = backContext;
+              fillStyle = oldBrickColor;
+              strokeStyle = '#000';
               break;
             default:
               return;
+          }
+
+          if ($context && fillStyle && strokeStyle) {
+            $context.fillStyle = fillStyle;
+            $context.fillRect(colIndex * cellWidth, rowIndex * cellHeight, cellWidth, cellHeight);
+
+            $context.strokeStyle = strokeStyle;
+            $context.strokeRect(colIndex * cellWidth, rowIndex * cellHeight, cellWidth, cellHeight);
           }
         });
       });
@@ -973,14 +1217,25 @@ var RenderCanvas = function () {
   }, {
     key: 'renderBack',
     value: function renderBack() {
-      var context = this.context,
+      var game = this.game,
+          context = this.context,
           width = this.width,
           height = this.height,
-          backColor = this.backColor;
+          backColor = this.backColor,
+          cellHeight = this.cellHeight,
+          cellWidth = this.cellWidth;
+      var matrix = game.matrix;
 
 
-      context.fillStyle = backColor;
-      context.fillRect(0, 0, width, height);
+      matrix.forEach(function (row, rowIndex) {
+        row && row.forEach(function (col, colIndex) {
+          context.fillStyle = backColor;
+          context.fillRect(colIndex * cellWidth, rowIndex * cellHeight, cellWidth, cellHeight);
+
+          context.strokeStyle = '#9e9e9e';
+          context.strokeRect(colIndex * cellWidth, rowIndex * cellHeight, cellWidth, cellHeight);
+        });
+      });
     }
   }, {
     key: 'cleanBrick',
@@ -1000,7 +1255,7 @@ var RenderCanvas = function () {
 exports.default = RenderCanvas;
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1010,7 +1265,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _RenderCanvas = __webpack_require__(15);
+var _RenderCanvas = __webpack_require__(17);
 
 Object.defineProperty(exports, 'RenderCanvas', {
   enumerable: true,
@@ -1022,57 +1277,17 @@ Object.defineProperty(exports, 'RenderCanvas', {
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(4);
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-module.exports = function (obj) {
-  var newObj = {};
-
-  Object.entries(Object.assign(newObj, obj)).forEach(function (_ref) {
-    var _ref2 = _slicedToArray(_ref, 2),
-        value = _ref2[0],
-        key = _ref2[1];
-
-    return newObj[key] = value;
-  });
-
-  return newObj;
-};
-
-/***/ }),
 /* 19 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+module.exports = __webpack_require__(5);
 
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = function () {
-  return _shapes2.default[Math.random() * len | 0];
-};
-
-var _shapes = __webpack_require__(6);
-
-var _shapes2 = _interopRequireDefault(_shapes);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var len = _shapes2.default.length;
 
 /***/ })
 /******/ ]);

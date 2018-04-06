@@ -4,6 +4,7 @@ import { matrixString } from '../utils'
 import Game from '../model/Game'
 
 export default class RenderCanvas {
+  game: Game
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   backCanvas: HTMLCanvasElement
@@ -12,6 +13,8 @@ export default class RenderCanvas {
   brickContext: CanvasRenderingContext2D
   width: number
   height: number
+  cellWidth: number
+  cellHeight: number
   lastBackPoints: string
   backColor: string
 
@@ -19,10 +22,14 @@ export default class RenderCanvas {
     if (!canvas) return
 
     this.canvas = canvas
+  }
+
+  init() {
+    let { canvas } = this
     this.context = canvas.getContext('2d')
     this.width = canvas.width
     this.height = canvas.height
-    this.backColor = 'gray'
+    this.backColor = '#e0e0e0'
 
     // clone elements
     let backCanvas = (this.backCanvas = canvas.cloneNode(true))
@@ -31,10 +38,11 @@ export default class RenderCanvas {
       'id',
       (canvas.getAttribute('id') || '_canvas') + '_back'
     )
+    backCanvas.className += ' ghost-canvas'
     canvas.parentElement && canvas.parentElement.appendChild(backCanvas)
     backCanvas.style.position = 'absolute'
-    backCanvas.style.top = offsetTop + 'px'
-    backCanvas.style.left = offsetLeft + 'px'
+    // backCanvas.style.top = offsetTop + 'px'
+    // backCanvas.style.left = offsetLeft + 'px'
     backCanvas.style.zIndex = '2'
     this.backContext = backCanvas.getContext('2d')
 
@@ -43,28 +51,46 @@ export default class RenderCanvas {
       'id',
       (canvas.getAttribute('id') || '_canvas') + '_brick'
     )
+    brickCanvas.className += ' ghost-canvas'
     canvas.parentElement && canvas.parentElement.appendChild(brickCanvas)
     brickCanvas.style.position = 'absolute'
-    brickCanvas.style.top = offsetTop + 'px'
-    brickCanvas.style.left = offsetLeft + 'px'
+    // brickCanvas.style.top = offsetTop + 'px'
+    // brickCanvas.style.left = offsetLeft + 'px'
     brickCanvas.style.zIndex = '3'
     this.brickContext = brickCanvas.getContext('2d')
-
-    this.renderBack()
   }
 
-  render(game: Game) {
-    let { matrix, brick, oldBrickColor, backColor } = game
-    let { width, height, context, backContext, brickContext } = this
-
-    if (!matrix) return
+  loadGame(game: Game) {
+    let { width, height } = this
+    let { matrix } = (this.game = game)
 
     let firstLine = matrix[0]
 
     if (!firstLine) return
 
-    let cellWidth = width / firstLine.length
-    let cellHeight = height / matrix.length
+    this.cellWidth = width / firstLine.length
+    this.cellHeight = height / matrix.length
+
+    this.renderBack()
+  }
+
+  render() {
+    let {
+      game,
+      width,
+      height,
+      context,
+      backContext,
+      brickContext,
+      cellWidth,
+      cellHeight
+    } = this
+
+    if (!game) throw new Error('load game first')
+
+    let { matrix, brick, oldBrickColor, backColor } = game
+
+    if (!matrix) return
     let { color: brickColor } = brick || {}
 
     let backPoints = matrixString(
@@ -82,41 +108,81 @@ export default class RenderCanvas {
     this.cleanBrick()
 
     // render brick
+    brickContext.lineWidth = 1
     matrix.forEach((row, rowIndex) => {
       row &&
         row.forEach((col, colIndex) => {
+          let $context = null
+          let fillStyle = null
+          let strokeStyle = null
           switch (col) {
             case pointType.newBrick:
-              brickContext.fillStyle = brickColor
-              brickContext.fillRect(
-                colIndex * cellWidth,
-                rowIndex * cellHeight,
-                cellWidth,
-                cellHeight
-              )
+              $context = brickContext
+              fillStyle = brickColor
+              strokeStyle = '#000'
               break
             case pointType.oldBrick:
-              backContext.fillStyle = oldBrickColor
-
-              backContext.fillRect(
-                colIndex * cellWidth,
-                rowIndex * cellHeight,
-                cellWidth,
-                cellHeight
-              )
+              $context = backContext
+              fillStyle = oldBrickColor
+              strokeStyle = '#000'
               break
             default:
               return
+          }
+
+          if ($context && fillStyle && strokeStyle) {
+            $context.fillStyle = fillStyle
+            $context.fillRect(
+              colIndex * cellWidth,
+              rowIndex * cellHeight,
+              cellWidth,
+              cellHeight
+            )
+
+            $context.strokeStyle = strokeStyle
+            $context.strokeRect(
+              colIndex * cellWidth,
+              rowIndex * cellHeight,
+              cellWidth,
+              cellHeight
+            )
           }
         })
     })
   }
 
   renderBack() {
-    let { context, width, height, backColor } = this
+    let {
+      game,
+      context,
+      width,
+      height,
+      backColor,
+      cellHeight,
+      cellWidth
+    } = this
+    let { matrix } = game
 
-    context.fillStyle = backColor
-    context.fillRect(0, 0, width, height)
+    matrix.forEach((row, rowIndex) => {
+      row &&
+        row.forEach((col, colIndex) => {
+          context.fillStyle = backColor
+          context.fillRect(
+            colIndex * cellWidth,
+            rowIndex * cellHeight,
+            cellWidth,
+            cellHeight
+          )
+
+          context.strokeStyle = '#9e9e9e'
+          context.strokeRect(
+            colIndex * cellWidth,
+            rowIndex * cellHeight,
+            cellWidth,
+            cellHeight
+          )
+        })
+    })
   }
 
   cleanBrick() {
