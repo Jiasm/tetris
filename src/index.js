@@ -17,8 +17,23 @@ $canvas.style.height = gameHeight + 'px'
 $canvas.width = gameWidth
 $canvas.height = gameHeight
 
+let qs = getQs(location.href.replace(/.*\?/g, ''))
+
+let { width = 8, height = 20 } = qs
+
 new Controller($canvas, {
   handlerKeyboard: true,
-  board: [16, 40],
+  board: [Number(width), Number(height)],
   scoreBoard: document.querySelector('#score-val')
 }).start()
+
+function getQs(qs) {
+  let obj = {}
+  if (/\w+=\w+/.test(qs)) {
+    qs.replace(/(\w+)=(\w+)/g, (_, key, value) => {
+      obj[key] = value
+    })
+  }
+
+  return obj
+}

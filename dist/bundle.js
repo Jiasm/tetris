@@ -613,11 +613,30 @@ $canvas.style.height = gameHeight + 'px';
 $canvas.width = gameWidth;
 $canvas.height = gameHeight;
 
+var qs = getQs(location.href.replace(/.*\?/g, ''));
+
+var _qs$width = qs.width,
+    width = _qs$width === undefined ? 8 : _qs$width,
+    _qs$height = qs.height,
+    height = _qs$height === undefined ? 20 : _qs$height;
+
+
 new _controller2.default($canvas, {
   handlerKeyboard: true,
-  board: [16, 40],
+  board: [Number(width), Number(height)],
   scoreBoard: document.querySelector('#score-val')
 }).start();
+
+function getQs(qs) {
+  var obj = {};
+  if (/\w+=\w+/.test(qs)) {
+    qs.replace(/(\w+)=(\w+)/g, function (_, key, value) {
+      obj[key] = value;
+    });
+  }
+
+  return obj;
+}
 
 /***/ }),
 /* 6 */
