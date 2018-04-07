@@ -86,6 +86,24 @@ Object.defineProperty(exports, 'deepCopy', {
   }
 });
 
+var _getShape = __webpack_require__(25);
+
+Object.defineProperty(exports, 'getShape', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_getShape).default;
+  }
+});
+
+var _buildEnum = __webpack_require__(26);
+
+Object.defineProperty(exports, 'buildEnum', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_buildEnum).default;
+  }
+});
+
 var _lineIndex = __webpack_require__(14);
 
 Object.defineProperty(exports, 'lineIndex', {
@@ -147,29 +165,7 @@ Object.defineProperty(exports, 'pointType', {
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-module.exports = function (obj) {
-  var newObj = {};
-
-  Object.entries(Object.assign(newObj, obj)).forEach(function (_ref) {
-    var _ref2 = _slicedToArray(_ref, 2),
-        value = _ref2[0],
-        key = _ref2[1];
-
-    return newObj[key] = value;
-  });
-
-  return newObj;
-};
-
-/***/ }),
+/* 2 */,
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -654,7 +650,7 @@ var _enum = __webpack_require__(1);
 
 var _view = __webpack_require__(18);
 
-var _data = __webpack_require__(8);
+var _utils = __webpack_require__(0);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -709,7 +705,7 @@ var Controller = function () {
     value: function loadBrick() {
       var game = this.game;
 
-      var shape = (0, _data.getShape)();
+      var shape = (0, _utils.getShape)();
       var brick = new _model.Brick({
         shape: shape
       });
@@ -812,51 +808,8 @@ var Controller = function () {
 exports.default = Controller;
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = function () {
-  return _shapes2.default[Math.random() * len | 0];
-};
-
-var _shapes = __webpack_require__(9);
-
-var _shapes2 = _interopRequireDefault(_shapes);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var len = _shapes2.default.length;
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _getShape = __webpack_require__(7);
-
-Object.defineProperty(exports, 'getShape', {
-  enumerable: true,
-  get: function get() {
-    return _interopRequireDefault(_getShape).default;
-  }
-});
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/***/ }),
+/* 7 */,
+/* 8 */,
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -865,7 +818,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _enum = __webpack_require__(1);
 
-var _utils = __webpack_require__(0);
+var _rotateArray = __webpack_require__(16);
+
+var _rotateArray2 = _interopRequireDefault(_rotateArray);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var newBrick = _enum.pointType.newBrick,
     empty = _enum.pointType.empty;
@@ -874,9 +831,9 @@ var newBrick = _enum.pointType.newBrick,
 var shapes = [[[newBrick, newBrick, newBrick], [empty, empty, newBrick]], [[newBrick, newBrick, newBrick, newBrick]], [[newBrick, newBrick, newBrick], [empty, newBrick, empty]], [[newBrick, newBrick, empty], [empty, newBrick, newBrick]], [[newBrick, newBrick], [newBrick, newBrick]]];
 
 shapes.forEach(function (item) {
-  var rotate1 = (0, _utils.rotateArray)(item);
-  var rotate2 = (0, _utils.rotateArray)(rotate1);
-  var rotate3 = (0, _utils.rotateArray)(rotate2);
+  var rotate1 = (0, _rotateArray2.default)(item);
+  var rotate2 = (0, _rotateArray2.default)(rotate1);
+  var rotate3 = (0, _rotateArray2.default)(rotate2);
   shapes = shapes.concat([rotate1, rotate2, rotate3]);
 });
 
@@ -889,7 +846,7 @@ module.exports = shapes;
 "use strict";
 
 
-var _buildEnum = __webpack_require__(2);
+var _buildEnum = __webpack_require__(26);
 
 var _buildEnum2 = _interopRequireDefault(_buildEnum);
 
@@ -911,7 +868,7 @@ module.exports = (0, _buildEnum2.default)(obj);
 "use strict";
 
 
-var _buildEnum = __webpack_require__(2);
+var _buildEnum = __webpack_require__(26);
 
 var _buildEnum2 = _interopRequireDefault(_buildEnum);
 
@@ -1293,6 +1250,56 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 module.exports = __webpack_require__(5);
 
+
+/***/ }),
+/* 21 */,
+/* 22 */,
+/* 23 */,
+/* 24 */,
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = function () {
+  return _shapes2.default[Math.random() * len | 0];
+};
+
+var _shapes = __webpack_require__(9);
+
+var _shapes2 = _interopRequireDefault(_shapes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var len = _shapes2.default.length;
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+module.exports = function (obj) {
+  var newObj = {};
+
+  Object.entries(Object.assign(newObj, obj)).forEach(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+        value = _ref2[0],
+        key = _ref2[1];
+
+    return newObj[key] = value;
+  });
+
+  return newObj;
+};
 
 /***/ })
 /******/ ]);
