@@ -1,4 +1,4 @@
-import shapes from './shapes'
+import shapes from '../data/shapes'
 
 const len = shapes.length
 

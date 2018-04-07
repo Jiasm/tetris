@@ -3,7 +3,7 @@
 import { Game, Brick } from '../model'
 import { pointType, gameType } from '../enum'
 import { RenderCanvas } from '../view'
-import { getShape } from '../data'
+import { getShape } from '../utils'
 
 export default class Controller {
   game: Game

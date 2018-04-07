@@ -1,5 +1,5 @@
 import { pointType } from '../enum'
-import { rotateArray } from '../utils'
+import rotateArray from '../utils/rotateArray'
 
 let { newBrick, empty } = pointType
 
