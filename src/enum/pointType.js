@@ -1,4 +1,4 @@
-import buildEnum from './buildEnum'
+import buildEnum from '../utils/buildEnum'
 
 let obj = {
   empty: 0,
