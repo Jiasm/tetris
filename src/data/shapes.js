@@ -7,6 +7,7 @@ let shapes = [
   [[newBrick, newBrick, newBrick], [empty, empty, newBrick]],
   [[newBrick, newBrick, newBrick, newBrick]],
   [[newBrick, newBrick, newBrick], [empty, newBrick, empty]],
+  [[newBrick, newBrick, empty], [empty, newBrick, newBrick]],
   [[newBrick, newBrick], [newBrick, newBrick]]
 ]
 

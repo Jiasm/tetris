@@ -886,7 +886,7 @@ var newBrick = _enum.pointType.newBrick,
     empty = _enum.pointType.empty;
 
 
-var shapes = [[[newBrick, newBrick, newBrick], [empty, empty, newBrick]], [[newBrick, newBrick, newBrick, newBrick]], [[newBrick, newBrick, newBrick], [empty, newBrick, empty]], [[newBrick, newBrick], [newBrick, newBrick]]];
+var shapes = [[[newBrick, newBrick, newBrick], [empty, empty, newBrick]], [[newBrick, newBrick, newBrick, newBrick]], [[newBrick, newBrick, newBrick], [empty, newBrick, empty]], [[newBrick, newBrick, empty], [empty, newBrick, newBrick]], [[newBrick, newBrick], [newBrick, newBrick]]];
 
 shapes.forEach(function (item) {
   var rotate1 = (0, _utils.rotateArray)(item);
