@@ -265,11 +265,6 @@ var Game = function () {
         return new Array(_this.width).fill(_enum.pointType.empty);
       });
 
-      // test
-      // this.oldMatrix.map((row, rowIndex) => {
-      //   row[6] = pointType.oldBrick
-      // })
-      // test end
       this.matrix = (0, _utils.deepCopy)(this.oldMatrix);
       this.removeLines = 0;
     }

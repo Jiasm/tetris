@@ -34,11 +34,6 @@ export default class Game {
       .fill(0)
       .map((_: number): arr => new Array(this.width).fill(pointType.empty))
 
-    // test
-    // this.oldMatrix.map((row, rowIndex) => {
-    //   row[6] = pointType.oldBrick
-    // })
-    // test end
     this.matrix = deepCopy(this.oldMatrix)
     this.removeLines = 0
   }
