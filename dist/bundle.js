@@ -702,6 +702,7 @@ var Controller = function () {
         this.loadBrick();
       } else if (game.status === _enum.gameType.over) {
         this.interval && clearInterval(this.interval);
+        alert('游戏结束！');
       } else {
         game.move('down');
       }

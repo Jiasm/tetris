@@ -42,6 +42,7 @@ export default class Controller {
       this.loadBrick()
     } else if (game.status === gameType.over) {
       this.interval && clearInterval(this.interval)
+      alert('游戏结束！')
     } else {
       game.move('down')
     }
