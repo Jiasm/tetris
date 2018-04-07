@@ -142,12 +142,3 @@ export default class Controller {
     }
   }
 }
-// test shape
-// [
-//   [
-//     pointType.newBrick,
-//     pointType.newBrick,
-//     pointType.newBrick,
-//     pointType.newBrick
-//   ]
-// ]

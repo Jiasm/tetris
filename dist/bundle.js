@@ -808,16 +808,6 @@ var Controller = function () {
 
   return Controller;
 }();
-// test shape
-// [
-//   [
-//     pointType.newBrick,
-//     pointType.newBrick,
-//     pointType.newBrick,
-//     pointType.newBrick
-//   ]
-// ]
-
 
 exports.default = Controller;
 
