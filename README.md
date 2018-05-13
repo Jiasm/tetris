@@ -1,4 +1,4 @@
-# tetris
+# :video_game:tetris
 Tetris, use javascript
 
 Online Demo: http://blog.jiasm.org/tetris/
